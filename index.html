@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="Analysis of NYC Congestion Pricing Impact using Vision-Based Methods">
+  <meta property="og:title" content="NYC Congestion Pricing: A Vision-Based Analysis" />
+  <meta property="og:description" content="Comprehensive analysis of traffic pattern changes in NYC following congestion pricing implementation in 2025" />
+  <meta property="og:url" content="https://your-domain.com/nyc-congestion-analysis" />
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/image/your_banner_image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+
+  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
+  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="computer vision, urban planning, congestion pricing, traffic analysis, smart cities, urban mobility, policy impact assessment">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>Academic Project Page</title>
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+</head>
+
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">NYC Congestion Pricing: <br>A Vision-Based Analysis</h1>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+
+  <!-- Teaser video-->
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <img src="static/images/title.png"
+          alt="Changes during weekday for the congestion pricing, as obtained through computer vision-based analysis."
+          width="50%" class="center" />
+        <h2 class="subtitle has-text-centered">
+          Using a computer vision framework applied to a network of 910 NYC traffic cameras, we analyze traffic patterns before and after the implementation of congestion pricing on January 5, 2025. The visualization above depicts relative traffic volume changes at key intersections throughout Manhattan, with circle diameter representing magnitude of change and color indicating direction (green for reduction, red for increase).
+        </h2>
+      </div>
+    </div>
+  </section>
+  <!-- End teaser video -->
+
+
+  <!-- Interactive buttons section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Launch Interactive Visualization</h2>
+        <div class="buttons is-centered mt-4">
+          <a href="weekday.html" 
+             target="_blank" 
+             class="button is-primary is-rounded is-medium mx-2" 
+             style="min-width: 200px; font-weight: 500; transition: all 0.3s ease;">
+            <span class="icon">
+              <i class="fas fa-map"></i>
+            </span>
+            <span>Weekdays</span>
+          </a>
+          <a href="weekend.html" 
+             target="_blank" 
+             class="button is-info is-rounded is-medium mx-2" 
+             style="min-width: 200px; font-weight: 500; transition: all 0.3s ease;">
+            <span class="icon">
+              <i class="fas fa-map"></i>
+            </span>
+            <span>Weekends</span>
+          </a>
+        </div>
+        <p class="help mt-4">Click on either button to open the interactive visualization in a new tab.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Paper abstract -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              We examine the impact of New York City's congestion pricing program through automated analysis of traffic camera data. Our computer vision pipeline processes footage from over 900 cameras distributed throughout Manhattan, comparing traffic patterns from November 2024 through the program's implementation in January 2025. By excluding anomalous periods such as holidays, we establish baseline traffic patterns and identify systematic changes in vehicle density across the monitored region. Our preliminary findings indicate substantial shifts in traffic distribution, including notable reductions in entry points to the congestion zone and unexpected traffic pattern changes in residential areas such as the Upper East Side. This ongoing research project will provide regular updates to track long-term evolution of urban mobility patterns in response to the pricing policy.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- End paper abstract -->
+  <section class="hero teaser"></section>
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <h2 class="title has-text-centered">Current Limitations</h2>
+
+      <h2 class="subtitle has-text-centered">
+        Our model has some important limitations: (i) the computer vision system includes stationary vehicles in traffic density calculations, which may affect measurements in areas with high street parking density, (ii) the baseline comparison period (starting mid-November) provides limited seasonal context, (iii) the current implementation analyzes aggregate traffic flow without distinguishing between individual lanes or travel directions, (iv) camera-based instantaneous vehicle counts serve as a proxy measure and may not directly correlate with actual transit times or congestion levels. 
+      </h2>
+    </div>
+  </div>
+  </section>
+
+  <!-- Image carousel -->
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container">
+        <div id="results-carousel" class="carousel results-carousel">
+          <div class="item">
+            <!-- Your image here -->
+            <img src="static/images/weekday.png" alt="Total # change in peaks of hourly car count averages during weekends." class="center" />
+            <h2 class="subtitle has-text-centered">
+              Total % change in peak hourly car count averages during weekdays.
+            </h2>
+          </div>
+          <div class="item">
+            <!-- Your image here -->
+            <img src="static/images/weekend.png" alt="Total # change in peaks of hourly car count averages during weekends." class="center" />
+            <h2 class="subtitle has-text-centered">
+              Total % change in peak hourly car count averages during weekends.
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End image carousel -->
+
+
+
+  <section class="hero teaser"></section>
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <h2 class="title has-text-centered">Access Interactive Visualizations</h2>
+
+      <h2 class="subtitle has-text-centered">
+        Our model has some important limitations: (i) the computer vision system includes stationary vehicles in traffic density calculations, which may affect measurements in areas with high street parking density, (ii) the baseline comparison period (starting mid-November) provides limited seasonal context, (iii) the current implementation analyzes aggregate traffic flow without distinguishing between individual lanes or travel directions, (iv) camera-based instantaneous vehicle counts serve as a proxy measure and may not directly correlate with actual transit times or congestion levels. 
+      </h2>
+    </div>
+  </div>
+  </section>
+
+
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <h2 class="title has-text-centered">Research Team</h2>
+
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+                <a href="keremturkcan.com" target="_blank">Mehmet Kerem Turkcan</a>,
+              </span>
+              <span class="author-block">
+                <a href="https://www.cs.tau.ac.il/~jhonatant/" target="_blank">Jhonatan Tavori</a>,
+              </span>
+              <span class="author-block">
+                <a href="https://www.ee.columbia.edu/~jghaderi/" target="_blank">Javad Ghaderi</a>,
+              </span>
+              <span class="author-block">
+                <a href="https://wimnet.ee.columbia.edu/people/gil-zussman/" target="_blank">Gil Zussman</a>,
+              </span>
+              <span class="author-block">
+                <a href="https://www.aidl.ee.columbia.edu/" target="_blank">Zoran Kostic</a>
+              </span>
+              <span class="author-block">
+                <a href="https://www.columbia.edu/cu/civileng/smyth/index.html" target="_blank">Andrew Smyth</a>
+              </span>
+              <div class="is-size-5 publication-authors">
+                <span class="author-block">Columbia University</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+ 
+ 
+ 
+ 
+
+
+
+  <div class="column has-text-centered">
+
+    <footer class="footer">
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-8">
+            <div class="content">
+
+              <p>
+                This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template"
+                  target="_blank">Academic Project Page Template</a> which was adopted from the <a
+                  href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+                You are free to borrow the source code of this website, we just ask that you link back to this page in
+                the footer. <br> This website is licensed under a <a rel="license"
+                  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+                  Commons Attribution-ShareAlike 4.0 International License</a>.
+              </p>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Statcounter tracking code -->
+
+    <!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+</body>
+
+</html>

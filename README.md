@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/mkturkcan/congestionpricing/blob/main/assets/title.png?raw=true"  width="1200" />
+  <img src="https://github.com/mkturkcan/congestionpricing/blob/main/static/images/title.png?raw=true"  width="1200" />
 </p>
 
 # NYC Congestion Pricing: A Vision-Based Analysis

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/mkturkcan/congestionpricing/blob/main/assets/title.png?raw=true"  width="1200" />
+</p>
+
 # NYC Congestion Pricing: A Vision-Based Analysis
 
 Using a computer vision framework applied to a network of 910 NYC traffic cameras, we analyze traffic patterns before and after the implementation of congestion pricing on January 5, 2025. Our visualization depicts relative traffic volume changes at key intersections throughout Manhattan, with circle diameter representing magnitude of change and color indicating direction (green for reduction, red for increase).

@@ -15,13 +15,6 @@ Using a computer vision framework applied to a network of 910 NYC traffic camera
 
 We examine the impact of New York City's congestion pricing program through automated analysis of traffic camera data. Our computer vision pipeline processes footage from over 900 cameras distributed throughout Manhattan, comparing traffic patterns from November 2024 through the program's implementation in January 2025. By excluding anomalous periods such as holidays, we establish baseline traffic patterns and identify systematic changes in vehicle density across the monitored region. Our preliminary findings indicate substantial shifts in traffic distribution, including notable reductions in entry points to the congestion zone and unexpected traffic pattern changes in residential areas such as the Upper East Side. This ongoing research project will provide regular updates to track long-term evolution of urban mobility patterns in response to the pricing policy.
 
-## Key Features
-
-- Analysis of 910+ traffic cameras across Manhattan
-- Comparison of pre- and post-implementation traffic patterns
-- Automated computer vision pipeline for traffic density analysis
-- Visualization of traffic pattern changes at key intersections
-
 ## Current Limitations
 
 1. The computer vision system includes stationary vehicles in traffic density calculations, which may affect measurements in areas with high street parking density

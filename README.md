@@ -47,6 +47,28 @@ We examine the impact of New York City's congestion pricing program through auto
 - [New York says 1 million fewer vehicles have entered Manhattan since congestion pricing start](https://www.msn.com/en-us/urban-infrastructure/transportation-infrastructure/new-york-says-1-million-fewer-vehicles-have-entered-manhattan-since-congestion-pricing-start/ar-AA1y5eBF)
 - [Congestion Pricing Tracker](https://www.congestion-pricing-tracker.com/)
 
+## Cite this Project
+
+```bibtex
+@misc{turkcan2025nyccp,
+    title = {NYC Congestion Pricing: A Vision-Based Analysis Dataset},
+    author = {Turkcan, Mehmet Kerem and 
+              Tavori, Jhonatan and 
+              Ghaderi, Javad and 
+              Zussman, Gil and 
+              Kostic, Zoran and 
+              Smyth, Andrew},
+    year = 2025,
+    publisher = {Hugging Face},
+    journal = {Hugging Face Datasets},
+    howpublished = {\url{https://huggingface.co/datasets/mehmetkeremturkcan/nyc-congestionpricing-cv/}},
+    url = {https://huggingface.co/datasets/mehmetkeremturkcan/nyc-congestionpricing-cv/},
+    doi = {10.57967/hf/4448},
+    institution = {Columbia University},
+    keywords = {computer vision, urban planning, congestion pricing, traffic analysis, smart cities, urban mobility, policy impact assessment},
+}
+```
+
 ## Acknowledgments
 
 This website template was adapted from the [Academic Project Page Template](https://github.com/eliahuhorwitz/Academic-project-page-template), which was based on the [Nerfies](https://nerfies.github.io) project page.

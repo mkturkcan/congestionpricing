@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>NYC Traffic - Real-Time Viewer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-panel: rgba(22, 33, 62, 0.95);
+            --text-primary: #eaeaea;
+            --text-secondary: #a0a0a0;
+            --accent: #4fc3f7;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+
+        .leaflet-container {
+            background: var(--bg-primary);
+        }
+
+        .panel {
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            color: var(--text-primary);
+            z-index: 1000;
+            position: absolute;
+        }
+
+        .info-panel {
+            top: 20px;
+            left: 60px;
+            padding: 20px 24px;
+            max-width: 340px;
+            min-width: 280px;
+        }
+
+        .info-panel h3 {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .live-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4444;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .live-indicator.connected {
+            background: #00c853;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: scale(0.9);
+            }
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat:last-of-type {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: 15px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .connection-status {
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .connection-status.connected {
+            background: rgba(0, 200, 83, 0.2);
+            color: #00c853;
+        }
+
+        .connection-status.disconnected {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+
+        .connection-status.connecting {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .legend {
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            color: var(--text-primary);
+        }
+
+        .legend h4 {
+            margin: 0 0 12px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 6px 0;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .update-flash {
+            animation: flash 0.5s ease-out;
+        }
+
+        @keyframes flash {
+            0% {
+                background: rgba(79, 195, 247, 0.3);
+            }
+
+            100% {
+                background: transparent;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <div class="panel info-panel">
+        <div class="stat">
+            <span class="stat-label">Last Update</span>
+            <span class="stat-value" id="last-update">--:--:--</span>
+        </div>
+    </div>
+
+    <script>
+        // MQTT Configuration (WebSocket)
+        const MQTT_BROKER = 'wss://broker.hivemq.com:8884/mqtt';
+        const MQTT_TOPIC = 'nyc/traffic/batch';
+
+        // Map setup
+        const map = L.map('map', { zoomControl: false }).setView([40.74, -73.99], 12);
+        L.control.zoom({ position: 'topright' }).addTo(map);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap, &copy; CARTO'
+        }).addTo(map);
+
+        // Store markers by camera index
+        const markers = new Map();
+
+        // Color function based on count
+        function getColor(count) {
+            if (count === 0) return '#2d5a87';
+            if (count < 5) return '#3498db';
+            if (count < 10) return '#5dade2';
+            if (count < 20) return '#85c1e9';
+            if (count < 30) return '#aed6f1';
+            return '#d4e6f1';
+        }
+
+        function getRadius(count) {
+            return Math.max(4, Math.min(20, 4 + count * 0.8));
+        }
+
+        // Flash effect - briefly increase opacity and add white glow
+        function flashMarker(marker) {
+            try {
+                const originalColor = marker.options.color;
+                const originalWeight = marker.options.weight;
+                const originalOpacity = marker.options.fillOpacity;
+
+                marker.setStyle({
+                    color: '#fff',
+                    weight: 3,
+                    fillOpacity: 1
+                });
+
+                setTimeout(() => {
+                    try {
+                        marker.setStyle({
+                            color: originalColor,
+                            weight: originalWeight,
+                            fillOpacity: originalOpacity
+                        });
+                    } catch (e) { }
+                }, 200);
+            } catch (e) { }
+        }
+
+        // Update or create marker
+        function updateMarker(data) {
+            try {
+                if (!data || !data.lat || !data.lon) return;
+
+                const count = data.class_2_count || 0;
+                const totalCount = (data.class_1_count || 0) + (data.class_2_count || 0) +
+                    (data.class_3_count || 0) + (data.class_5_count || 0) +
+                    (data.class_7_count || 0);
+
+                const key = data.data_source;
+                const color = getColor(count);
+                const radius = getRadius(count);
+
+                const popupContent = `
+                    <div style="font-family: Inter, sans-serif; padding: 4px;">
+                        <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">${data.name || 'Camera ' + key}</div>
+                        <div style="display: grid; grid-template-columns: auto auto; gap: 4px 12px; font-size: 12px;">
+                            <span style="color: #888;">Bicycles:</span><span>${data.class_1_count || 0}</span>
+                            <span style="color: #888;">Cars:</span><span style="font-weight:600;">${data.class_2_count || 0}</span>
+                            <span style="color: #888;">Motorcycles:</span><span>${data.class_3_count || 0}</span>
+                            <span style="color: #888;">Buses:</span><span>${data.class_5_count || 0}</span>
+                            <span style="color: #888;">Trucks:</span><span>${data.class_7_count || 0}</span>
+                            <span style="color: #888;">Total:</span><span style="font-weight:600;">${totalCount}</span>
+                        </div>
+                        <div style="font-size: 10px; color: #666; margin-top: 8px;">
+                            Updated: ${new Date(data.current_time).toLocaleTimeString()}
+                        </div>
+                    </div>
+                `;
+
+                if (markers.has(key)) {
+                    const marker = markers.get(key);
+                    marker.setRadius(radius);
+                    marker.setStyle({ fillColor: color });
+                    marker.setPopupContent(popupContent);
+                    flashMarker(marker);
+                } else {
+                    const marker = L.circleMarker([data.lat, data.lon], {
+                        radius: radius,
+                        fillColor: color,
+                        color: '#fff',
+                        weight: 1,
+                        fillOpacity: 0.8,
+                        opacity: 0.6
+                    }).bindPopup(popupContent).addTo(map);
+
+                    markers.set(key, marker);
+                    flashMarker(marker);
+                }
+            } catch (e) {
+                // Ignore any errors
+            }
+        }
+
+        function animateRadius(marker, from, to, duration) {
+            const startTime = performance.now();
+
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const newRadius = from + (to - from) * eased;
+                marker.setRadius(newRadius);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+        }
+
+        // MQTT Connection
+        let mqttClient = null;
+
+        function connectMQTT() {
+            mqttClient = mqtt.connect(MQTT_BROKER, {
+                clientId: 'nyc_traffic_viewer_' + Math.random().toString(16).substr(2, 8),
+                clean: true,
+                reconnectPeriod: 5000
+            });
+
+            mqttClient.on('connect', function () {
+                console.log('Connected to MQTT broker');
+
+                mqttClient.subscribe(MQTT_TOPIC, function (err) {
+                    if (err) {
+                        console.error('Subscribe error:', err);
+                    } else {
+                        console.log('Subscribed to', MQTT_TOPIC);
+                    }
+                });
+            });
+
+            mqttClient.on('message', function (topic, message) {
+                try {
+                    const data = JSON.parse(message.toString());
+
+                    // Process updates
+                    if (Array.isArray(data)) {
+                        data.forEach(item => updateMarker(item));
+                    } else {
+                        updateMarker(data);
+                    }
+
+                    updateStats();
+
+                } catch (e) {
+                    // Silently ignore parse errors
+                }
+            });
+
+            mqttClient.on('error', function (err) {
+                console.error('MQTT error:', err);
+            });
+
+            mqttClient.on('offline', function () {
+                console.log('MQTT offline, reconnecting...');
+            });
+
+            mqttClient.on('reconnect', function () {
+                console.log('MQTT reconnecting...');
+            });
+        }
+
+        // Add legend
+        const legend = L.control({ position: 'bottomright' });
+        legend.onAdd = function () {
+            const div = L.DomUtil.create('div', 'legend');
+            div.innerHTML = `
+                <h4>Vehicle Count</h4>
+                <div class="legend-item"><div class="legend-color" style="background:#2d5a87"></div> 0</div>
+                <div class="legend-item"><div class="legend-color" style="background:#3498db"></div> 1-4</div>
+                <div class="legend-item"><div class="legend-color" style="background:#5dade2"></div> 5-9</div>
+                <div class="legend-item"><div class="legend-color" style="background:#85c1e9"></div> 10-19</div>
+                <div class="legend-item"><div class="legend-color" style="background:#aed6f1"></div> 20-29</div>
+                <div class="legend-item"><div class="legend-color" style="background:#d4e6f1"></div> 30+</div>
+                <div style="margin-top:10px;font-size:10px;color:#888;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;">
+                    Circle size = vehicle count<br>
+                    Color intensity = density
+                </div>
+            `;
+            return div;
+        };
+        legend.addTo(map);
+
+        // Start connection
+        connectMQTT();
+
+        // Periodic stats update
+        setInterval(updateStats, 5000);
+    </script>
+</body>
+
+</html>

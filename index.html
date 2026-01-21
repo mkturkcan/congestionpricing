@@ -69,12 +69,14 @@
     <div class="container is-max-desktop">
       <div class="hero-body" style="padding-bottom: 0px;">
         <img src="static/images/title.png"
-          alt="Changes during weekday for the congestion pricing, as obtained through computer vision-based analysis."
+          alt="Changes in traffic patterns for the congestion pricing, as obtained through computer vision-based analysis."
           width="50%" class="center" />
         <h2 class="subtitle has-text-centered">
           Using a computer vision framework applied to a network of 910 NYC traffic cameras, we analyze traffic patterns
-          before and after the implementation of congestion pricing on January 5, 2025. The visualization above depicts
-          relative traffic volume changes at key intersections throughout Manhattan and New York, with circle diameter representing
+          using year-to-year data from November 14 to January 4 (before and after) to look at the effects of the
+          pricing. The visualization above depicts
+          relative traffic volume changes at key intersections throughout Manhattan and New York, with circle diameter
+          representing
           magnitude of change and color indicating direction (green for reduction, red for increase).
         </h2>
       </div>
@@ -90,26 +92,27 @@
         <div class="column is-four-fifths">
           <h2 class="title is-4">Launch Interactive Visualization</h2>
           <div class="buttons is-centered mt-4">
-            <a href="weekday.html" target="_blank" class="button is-primary is-rounded is-medium mx-2"
-              style="min-width: 200px; font-weight: 500; transition: all 0.3s ease;">
+            <a href="interactive/index.html" target="_blank" class="interactive-map-button mx-2">
               <span class="icon">
                 <i class="fas fa-map"></i>
               </span>
-              <span>Weekdays</span>
-            </a>
-            <a href="weekend.html" target="_blank" class="button is-info is-rounded is-medium mx-2"
-              style="min-width: 200px; font-weight: 500; transition: all 0.3s ease;">
-              <span class="icon">
-                <i class="fas fa-map"></i>
-              </span>
-              <span>Weekends</span>
+              <span>Interactive Map</span>
             </a>
           </div>
-          <p class="help mt-4">Click on either button to open the interactive visualization in a new tab.</p>
+          <p class="help mt-4">Click on the button to open the interactive visualization in a new tab.</p>
         </div>
       </div>
     </div>
   </section>
+
+
+
+
+
+
+
+
+
 
 
   <!-- Paper abstract -->
@@ -122,8 +125,8 @@
             <p>
               We examine the impact of New York City's congestion pricing program through automated analysis of traffic
               camera data. Our computer vision pipeline processes footage from over 900 cameras distributed throughout
-              Manhattan, comparing traffic patterns from November 2024 through the program's implementation in January
-              2025. By excluding anomalous periods such as holidays, we establish baseline traffic patterns and identify
+              Manhattan, comparing traffic patterns using year-to-year data from November 14 to January 4. By excluding
+              anomalous periods such as holidays, we establish baseline traffic patterns and identify
               systematic changes in vehicle density across the monitored region. Our preliminary findings indicate
               substantial shifts in traffic distribution, including notable reductions in entry points to the congestion
               zone and unexpected traffic pattern changes in residential areas such as the Upper East Side. This ongoing
@@ -135,38 +138,6 @@
       </div>
     </div>
   </section>
-
-
-
-
-
-  <!-- Image carousel -->
-  <section class="hero is-small">
-    <div class="hero-body">
-      <div class="container">
-        <div id="results-carousel" class="carousel results-carousel">
-          <div class="item">
-            <!-- Your image here -->
-            <img src="static/images/weekday.png"
-              alt="Total # change in peaks of hourly car count averages during weekends." class="center2" />
-            <h2 class="subtitle has-text-centered">
-              Total # change in peaks of hourly car count averages during weekends.
-            </h2>
-          </div>
-          <div class="item">
-            <!-- Your image here -->
-            <img src="static/images/weekend.png"
-              alt="Total # change in peaks of hourly car count averages during weekends." class="center2" />
-            <h2 class="subtitle has-text-centered">
-              Total # change in peaks of hourly car count averages during weekends.
-            </h2>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- End image carousel -->
-
   <!-- End paper abstract -->
   <section class="hero teaser"></section>
   <div class="container is-max-desktop">
@@ -174,10 +145,11 @@
       <h2 class="title has-text-centered">Current Limitations</h2>
 
       <h2 class="subtitle has-text-centered">
-        Our approach has some important limitations: (i) the computer vision system includes stationary vehicles in traffic
-        density calculations, which may affect measurements in areas with high street parking density, (ii) the baseline
-        comparison period (starting mid-November) provides limited seasonal context, (iii) the current implementation
-        analyzes aggregate traffic flow without distinguishing between individual lanes or travel directions, (iv)
+        Our approach has some important limitations: (i) the computer vision system includes stationary vehicles in
+        traffic
+        density calculations, which may affect measurements in areas with high street parking density, (ii) the current
+        implementation
+        analyzes aggregate traffic flow without distinguishing between individual lanes or travel directions, (iii)
         camera-based instantaneous vehicle counts serve as a proxy measure and may not directly correlate with actual
         transit times or congestion levels.
       </h2>
@@ -185,10 +157,10 @@
   </div>
   </section>
 
-  
 
 
-<section class="hero">
+
+  <section class="hero">
     <div class="hero-body" style="padding-bottom: 0px;">
       <div class="container is-max-desktop">
         <h2 class="title has-text-centered">Research Team</h2>
@@ -265,11 +237,46 @@
     <div class="container is-max-desktop">
       <h2 class="title has-text-centered">Related Links</h2>
       <ul class="content has-text-centered">
-        <li><a href="https://www.mta.info/article/most-detailed-view-of-nyc-traffic-so-far" target="_blank">The most detailed view of NYC traffic (so far)</a></li>
-        <li><a href="https://inrix.com/blog/2025-kicks-off-right-cordon-based-congestion-pricing-implemented-in-new-york-city/" target="_blank">2025 Kicks Off Right: Cordon-Based Congestion Pricing Implemented in New York City</a></li>
-        <li><a href="https://www.msn.com/en-us/urban-infrastructure/transportation-infrastructure/new-york-says-1-million-fewer-vehicles-have-entered-manhattan-since-congestion-pricing-start/ar-AA1y5eBF" target="_blank">New York says 1 million fewer vehicles have entered Manhattan since congestion pricing start</a></li>
+        <li><a href="https://www.mta.info/article/most-detailed-view-of-nyc-traffic-so-far" target="_blank">The most
+            detailed view of NYC traffic (so far)</a></li>
+        <li><a
+            href="https://inrix.com/blog/2025-kicks-off-right-cordon-based-congestion-pricing-implemented-in-new-york-city/"
+            target="_blank">2025 Kicks Off Right: Cordon-Based Congestion Pricing Implemented in New York City</a></li>
+        <li><a
+            href="https://www.msn.com/en-us/urban-infrastructure/transportation-infrastructure/new-york-says-1-million-fewer-vehicles-have-entered-manhattan-since-congestion-pricing-start/ar-AA1y5eBF"
+            target="_blank">New York says 1 million fewer vehicles have entered Manhattan since congestion pricing
+            start</a></li>
         <li><a href="https://www.congestion-pricing-tracker.com/" target="_blank">Congestion Pricing Tracker</a></li>
       </ul>
+    </div>
+  </section>
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">References</h2>
+      <p>If you use this dataset or code in your research, please kindly cite the following works:</p>
+      <pre><code>@misc{mehmet_kerem_turkcan_2025,
+  author = {Mehmet Kerem Turkcan},
+  title = {nyc-congestionpricing-cv (Revision 9d9dd30)},
+  year = 2025,
+  url = {https://huggingface.co/datasets/mehmetkeremturkcan/nyc-congestionpricing-cv},
+  doi = {10.57967/hf/4448},
+  publisher = {Hugging Face}
+}
+
+@inproceedings{10.1145/3769102.3770618,
+  author = {Ghasemi, Mahshid and Fu, Yongjie and Ouyang, Xinyu and Wang, Peiran and Turkcan, Mehmet Kerem and Tavori, Jhonatan and Kleisarchaki, Sofia and Calmant, Thomas and G\"{u}rgen, Levent and Kostic, Zoran and Di, Xuan Sharon and Zussman, Gil and Ghaderi, Javad},
+  title = {Real-Time Video Analytics for Urban Safety: Deployment over Edge and End Devices},
+  year = {2025},
+  isbn = {9798400722387},
+  publisher = {Association for Computing Machinery},
+  url = {https://doi.org/10.1145/3769102.3770618},
+  doi = {10.1145/3769102.3770618},
+  booktitle = {Proceedings of the Tenth ACM/IEEE Symposium on Edge Computing},
+  articleno = {14},
+  numpages = {17},
+  series = {SEC '25}
+}</code></pre>
     </div>
   </section>
 

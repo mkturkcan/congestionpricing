@@ -394,7 +394,7 @@
         legend.onAdd = function () {
             const div = L.DomUtil.create('div', 'legend');
             div.innerHTML = `
-                <h4>Vehicle Count</h4>
+                <h4>Vehicle Count per Frame</h4>
                 <div class="legend-item"><div class="legend-color" style="background:#2d5a87"></div> 0</div>
                 <div class="legend-item"><div class="legend-color" style="background:#3498db"></div> 1-4</div>
                 <div class="legend-item"><div class="legend-color" style="background:#5dade2"></div> 5-9</div>
@@ -402,7 +402,7 @@
                 <div class="legend-item"><div class="legend-color" style="background:#aed6f1"></div> 20-29</div>
                 <div class="legend-item"><div class="legend-color" style="background:#d4e6f1"></div> 30+</div>
                 <div style="margin-top:10px;font-size:10px;color:#888;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;">
-                    Circle size = vehicle count<br>
+                    Circle size = vehicle count per frame<br>
                     Color intensity = density
                 </div>
             `;

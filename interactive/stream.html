@@ -11,14 +11,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #1a1a2e;
-            --bg-secondary: #16213e;
-            --bg-panel: rgba(22, 33, 62, 0.95);
-            --text-primary: #eaeaea;
-            --text-secondary: #a0a0a0;
-            --accent: #4fc3f7;
-            --border: rgba(255, 255, 255, 0.1);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-panel: rgba(255, 255, 255, 0.95);
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --accent: #1976d2;
+            --border: rgba(0, 0, 0, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
         }
 
         * {
@@ -31,9 +31,22 @@
             background: var(--bg-primary);
         }
 
+        /* Container for Map and Panels to ensure relative positioning */
+        #map-container {
+            position: relative;
+            height: calc(100vh - 40px);
+            width: calc(100% - 40px);
+            margin: 20px;
+            overflow: hidden;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
         #map {
-            height: 100vh;
+            height: 100%;
             width: 100%;
+            z-index: 1;
         }
 
         .leaflet-container {
@@ -48,16 +61,51 @@
             border-radius: 16px;
             box-shadow: var(--shadow);
             color: var(--text-primary);
-            z-index: 1000;
+            z-index: 100;
             position: absolute;
+            /* Positioned relative to #map-container */
         }
 
         .info-panel {
             top: 20px;
-            left: 60px;
-            padding: 20px 24px;
-            max-width: 340px;
-            min-width: 280px;
+            left: 20px;
+            padding: 12px 16px;
+            width: fit-content;
+            min-width: 200px;
+        }
+
+        @media (max-width: 600px) {
+            .info-panel {
+                top: 15px;
+                left: 15px;
+                padding: 10px 14px;
+                min-width: auto;
+                font-size: 0.9em;
+            }
+        }
+
+        .about-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+            padding-top: 6px;
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--accent);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .about-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .about-link svg {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
         }
 
         .info-panel h3 {
@@ -100,9 +148,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 10px 0;
-            padding: 8px 0;
+            margin: 5px 0;
+            padding: 0px 0;
             border-bottom: 1px solid var(--border);
+            gap: 12px;
         }
 
         .stat:last-of-type {
@@ -152,6 +201,12 @@
             border-radius: 12px;
             box-shadow: var(--shadow);
             color: var(--text-primary);
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            margin: 0 !important;
+            /* Override Leaflet default margins */
         }
 
         .legend h4 {
@@ -191,16 +246,183 @@
                 background: transparent;
             }
         }
+
+        /* View Controls Panel */
+        .controls-panel {
+            bottom: 20px;
+            left: 20px;
+            padding: 12px 16px;
+            min-width: 180px;
+        }
+
+        .controls-panel h4 {
+            margin: 0 0 10px 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            font-size: 11px;
+            font-family: inherit;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .preset-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .advanced-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            cursor: pointer;
+            font-size: 11px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 8px;
+        }
+
+        .advanced-toggle:hover {
+            color: var(--text-primary);
+        }
+
+        .advanced-toggle .arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .advanced-toggle.expanded .arrow {
+            transform: rotate(180deg);
+        }
+
+        .advanced-options {
+            display: none;
+            padding-top: 8px;
+        }
+
+        .advanced-options.visible {
+            display: block;
+        }
+
+        .controls-panel .checkbox-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 4px 0 !important;
+            font-size: 12px !important;
+            color: var(--text-secondary) !important;
+            cursor: pointer !important;
+            margin: 0 !important;
+            background: transparent !important;
+            border: none !important;
+        }
+
+        .controls-panel .checkbox-item:hover {
+            color: var(--text-primary) !important;
+        }
+
+        .controls-panel .checkbox-item input[type="checkbox"] {
+            width: 14px !important;
+            height: 14px !important;
+            min-width: 14px !important;
+            min-height: 14px !important;
+            accent-color: var(--accent) !important;
+            cursor: pointer !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            appearance: auto !important;
+            -webkit-appearance: checkbox !important;
+            -moz-appearance: checkbox !important;
+        }
+
+        @media (max-width: 600px) {
+            .controls-panel {
+                bottom: 15px;
+                left: 15px;
+                padding: 10px 12px;
+                min-width: 160px;
+            }
+
+            .preset-btn {
+                padding: 5px 10px;
+                font-size: 10px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div id="map"></div>
+    <div id="map-container">
+        <div id="map"></div>
 
-    <div class="panel info-panel">
-        <div class="stat">
-            <span class="stat-label">Last Update</span>
-            <span class="stat-value" id="last-update">--:--:--</span>
+        <div class="panel info-panel">
+            <div class="stat">
+                <span class="stat-label">Last Update</span>
+                <span class="stat-value" id="last-update">--:--:--</span>
+            </div>
+            <a href="https://mkturkcan.github.io/congestionpricing/" target="_blank" rel="noopener" class="about-link">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                </svg>
+                About this project
+            </a>
+        </div>
+
+        <div class="panel controls-panel">
+            <h4>View</h4>
+            <div class="preset-buttons">
+                <button class="preset-btn active" data-preset="all">All</button>
+                <button class="preset-btn" data-preset="cars">Cars</button>
+                <button class="preset-btn" data-preset="bikes">Bikes</button>
+                <button class="preset-btn" data-preset="buses">Buses</button>
+                <button class="preset-btn" data-preset="trucks">Trucks</button>
+            </div>
+            <div class="advanced-toggle" id="advanced-toggle">
+                <span>Advanced</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="advanced-options" id="advanced-options">
+                <label class="checkbox-item">
+                    <input type="checkbox" id="filter-bikes" checked> Bicycles
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="filter-cars" checked> Cars
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="filter-motorcycles" checked> Motorcycles
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="filter-buses" checked> Buses
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="filter-trucks" checked> Trucks
+                </label>
+            </div>
         </div>
     </div>
 
@@ -213,12 +435,34 @@
         const map = L.map('map', { zoomControl: false }).setView([40.74, -73.99], 12);
         L.control.zoom({ position: 'topright' }).addTo(map);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap, &copy; CARTO'
         }).addTo(map);
 
         // Store markers by camera index
         const markers = new Map();
+        // Store raw data for re-rendering when filters change
+        const markerData = new Map();
+
+        // Filter state
+        const filters = {
+            bikes: true,      // class_1
+            cars: true,       // class_2
+            motorcycles: true, // class_3
+            buses: true,      // class_5
+            trucks: true      // class_7
+        };
+
+        // Get filtered count based on active filters
+        function getFilteredCount(data) {
+            let count = 0;
+            if (filters.bikes) count += data.class_1_count || 0;
+            if (filters.cars) count += data.class_2_count || 0;
+            if (filters.motorcycles) count += data.class_3_count || 0;
+            if (filters.buses) count += data.class_5_count || 0;
+            if (filters.trucks) count += data.class_7_count || 0;
+            return count;
+        }
 
         // Color function based on count
         function getColor(count) {
@@ -264,12 +508,15 @@
             try {
                 if (!data || !data.lat || !data.lon) return;
 
-                const count = data.class_2_count || 0;
+                const key = data.data_source;
+                // Store raw data for filter updates
+                markerData.set(key, data);
+
+                const count = getFilteredCount(data);
                 const totalCount = (data.class_1_count || 0) + (data.class_2_count || 0) +
                     (data.class_3_count || 0) + (data.class_5_count || 0) +
                     (data.class_7_count || 0);
 
-                const key = data.data_source;
                 const color = getColor(count);
                 const radius = getRadius(count);
 
@@ -312,6 +559,34 @@
             } catch (e) {
                 // Ignore any errors
             }
+        }
+
+        // Refresh all markers with current filter state
+        function refreshMarkers() {
+            markerData.forEach((data, key) => {
+                const count = getFilteredCount(data);
+                const color = getColor(count);
+                const radius = getRadius(count);
+                if (markers.has(key)) {
+                    const marker = markers.get(key);
+                    marker.setRadius(radius);
+                    marker.setStyle({ fillColor: color });
+                }
+            });
+        }
+
+        // Update filter checkboxes to match state
+        function syncCheckboxes() {
+            document.getElementById('filter-bikes').checked = filters.bikes;
+            document.getElementById('filter-cars').checked = filters.cars;
+            document.getElementById('filter-motorcycles').checked = filters.motorcycles;
+            document.getElementById('filter-buses').checked = filters.buses;
+            document.getElementById('filter-trucks').checked = filters.trucks;
+        }
+
+        // Clear active state from all preset buttons
+        function clearPresetActive() {
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
         }
 
         function animateRadius(marker, from, to, duration) {
@@ -389,26 +664,113 @@
             });
         }
 
-        // Add legend
-        const legend = L.control({ position: 'bottomright' });
-        legend.onAdd = function () {
-            const div = L.DomUtil.create('div', 'legend');
-            div.innerHTML = `
-                <h4>Vehicle Count per Frame</h4>
-                <div class="legend-item"><div class="legend-color" style="background:#2d5a87"></div> 0</div>
-                <div class="legend-item"><div class="legend-color" style="background:#3498db"></div> 1-4</div>
-                <div class="legend-item"><div class="legend-color" style="background:#5dade2"></div> 5-9</div>
-                <div class="legend-item"><div class="legend-color" style="background:#85c1e9"></div> 10-19</div>
-                <div class="legend-item"><div class="legend-color" style="background:#aed6f1"></div> 20-29</div>
-                <div class="legend-item"><div class="legend-color" style="background:#d4e6f1"></div> 30+</div>
-                <div style="margin-top:10px;font-size:10px;color:#888;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;">
-                    Circle size = vehicle count per frame<br>
-                    Color intensity = density
-                </div>
-            `;
-            return div;
-        };
-        legend.addTo(map);
+        // Add custom legend control that is independent of Leaflet's control container 
+        // to simplify positioning relative to our wrapper
+        const legend = document.createElement('div');
+        legend.className = 'legend';
+        legend.innerHTML = `
+            <h4>Vehicle Count per Frame</h4>
+            <div class="legend-item"><div class="legend-color" style="background:#2d5a87"></div> 0</div>
+            <div class="legend-item"><div class="legend-color" style="background:#3498db"></div> 1-4</div>
+            <div class="legend-item"><div class="legend-color" style="background:#5dade2"></div> 5-9</div>
+            <div class="legend-item"><div class="legend-color" style="background:#85c1e9"></div> 10-19</div>
+            <div class="legend-item"><div class="legend-color" style="background:#aed6f1"></div> 20-29</div>
+            <div class="legend-item"><div class="legend-color" style="background:#d4e6f1"></div> 30+</div>
+            <div style="margin-top:10px;font-size:10px;color:#888;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;">
+                Circle size = vehicle count per frame<br>
+                Color intensity = density
+            </div>
+        `;
+        document.getElementById('map-container').appendChild(legend);
+
+        // === Controls Event Handlers ===
+
+        // Advanced toggle
+        document.getElementById('advanced-toggle').addEventListener('click', function () {
+            this.classList.toggle('expanded');
+            document.getElementById('advanced-options').classList.toggle('visible');
+        });
+
+        // Preset buttons
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const preset = this.dataset.preset;
+                clearPresetActive();
+                this.classList.add('active');
+
+                // Apply preset filter configuration
+                switch (preset) {
+                    case 'all':
+                        filters.bikes = true;
+                        filters.cars = true;
+                        filters.motorcycles = true;
+                        filters.buses = true;
+                        filters.trucks = true;
+                        break;
+                    case 'cars':
+                        filters.bikes = false;
+                        filters.cars = true;
+                        filters.motorcycles = false;
+                        filters.buses = false;
+                        filters.trucks = false;
+                        break;
+                    case 'bikes':
+                        filters.bikes = true;
+                        filters.cars = false;
+                        filters.motorcycles = true;  // Include motorcycles with bikes
+                        filters.buses = false;
+                        filters.trucks = false;
+                        break;
+                    case 'buses':
+                        filters.bikes = false;
+                        filters.cars = false;
+                        filters.motorcycles = false;
+                        filters.buses = true;
+                        filters.trucks = false;
+                        break;
+                    case 'trucks':
+                        filters.bikes = false;
+                        filters.cars = false;
+                        filters.motorcycles = false;
+                        filters.buses = false;
+                        filters.trucks = true;
+                        break;
+                }
+                syncCheckboxes();
+                refreshMarkers();
+            });
+        });
+
+        // Individual checkbox handlers
+        document.getElementById('filter-bikes').addEventListener('change', function () {
+            filters.bikes = this.checked;
+            clearPresetActive();
+            refreshMarkers();
+        });
+
+        document.getElementById('filter-cars').addEventListener('change', function () {
+            filters.cars = this.checked;
+            clearPresetActive();
+            refreshMarkers();
+        });
+
+        document.getElementById('filter-motorcycles').addEventListener('change', function () {
+            filters.motorcycles = this.checked;
+            clearPresetActive();
+            refreshMarkers();
+        });
+
+        document.getElementById('filter-buses').addEventListener('change', function () {
+            filters.buses = this.checked;
+            clearPresetActive();
+            refreshMarkers();
+        });
+
+        document.getElementById('filter-trucks').addEventListener('change', function () {
+            filters.trucks = this.checked;
+            clearPresetActive();
+            refreshMarkers();
+        });
 
         // Start connection
         connectMQTT();

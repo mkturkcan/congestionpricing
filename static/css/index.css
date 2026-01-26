@@ -1,4 +1,8 @@
 /* Existing styles */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Noto Sans', sans-serif;
   background-color: #ffffff;
@@ -11,6 +15,13 @@ a {
 
 a:hover {
   color: #1565c0;
+}
+
+/* Override default link color for interactive-map-button */
+a.interactive-map-button,
+a.interactive-map-button:hover,
+a.interactive-map-button:visited {
+  color: #1a1a1a !important;
 }
 
 .footer .icon-link {

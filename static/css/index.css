@@ -20,7 +20,9 @@ a:hover {
 /* Override default link color for interactive-map-button */
 a.interactive-map-button,
 a.interactive-map-button:hover,
-a.interactive-map-button:visited {
+a.interactive-map-button:visited,
+a.interactive-map-button:active,
+a.interactive-map-button:focus {
   color: #1a1a1a !important;
 }
 
@@ -88,6 +90,18 @@ a.interactive-map-button:visited {
   transform: translateY(-2px);
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
   border-color: #1976d2 !important;
+}
+
+.interactive-map-button:active {
+  background: rgba(255, 255, 255, 0.95) !important;
+  transform: translateY(0);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.interactive-map-button:focus {
+  background: rgba(255, 255, 255, 0.95) !important;
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
 }
 
 .interactive-map-button .icon {

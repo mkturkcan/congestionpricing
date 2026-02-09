@@ -466,7 +466,7 @@
 
         // Color function based on count
         function getColor(count) {
-            if (count === 0) return '#2d5a87';
+            if (count === 0) return '#999999';  // Gray for no vehicles
             if (count < 5) return '#3498db';
             if (count < 10) return '#5dade2';
             if (count < 20) return '#85c1e9';
@@ -475,8 +475,32 @@
         }
 
         function getRadius(count) {
+            if (count === 0) return 3;  // Small dot for no vehicles
             return Math.max(4, Math.min(20, 4 + count * 0.8));
         }
+
+        // Get marker style based on count (hollow ring for 0)
+        function getMarkerStyle(count, color) {
+            if (count === 0) {
+                return {
+                    fillColor: 'transparent',
+                    color: color,
+                    weight: 1.5,
+                    fillOpacity: 0,
+                    opacity: 0.7
+                };
+            }
+            return {
+                fillColor: color,
+                color: '#fff',
+                weight: 1,
+                fillOpacity: 0.8,
+                opacity: 0.6
+            };
+        }
+
+        // State for hiding empty cameras
+        let showEmptyCameras = true;
 
         // Flash effect - briefly increase opacity and add white glow
         function flashMarker(marker) {
@@ -537,24 +561,33 @@
                     </div>
                 `;
 
+                const style = getMarkerStyle(count, color);
+                const shouldShow = count > 0 || showEmptyCameras;
+
                 if (markers.has(key)) {
                     const marker = markers.get(key);
                     marker.setRadius(radius);
-                    marker.setStyle({ fillColor: color });
+                    marker.setStyle(style);
                     marker.setPopupContent(popupContent);
-                    flashMarker(marker);
+
+                    // Show/hide based on empty camera toggle
+                    if (shouldShow) {
+                        if (!map.hasLayer(marker)) map.addLayer(marker);
+                        flashMarker(marker);
+                    } else {
+                        if (map.hasLayer(marker)) map.removeLayer(marker);
+                    }
                 } else {
                     const marker = L.circleMarker([data.lat, data.lon], {
                         radius: radius,
-                        fillColor: color,
-                        color: '#fff',
-                        weight: 1,
-                        fillOpacity: 0.8,
-                        opacity: 0.6
-                    }).bindPopup(popupContent).addTo(map);
+                        ...style
+                    }).bindPopup(popupContent);
 
+                    if (shouldShow) {
+                        marker.addTo(map);
+                        flashMarker(marker);
+                    }
                     markers.set(key, marker);
-                    flashMarker(marker);
                 }
             } catch (e) {
                 // Ignore any errors
@@ -567,10 +600,20 @@
                 const count = getFilteredCount(data);
                 const color = getColor(count);
                 const radius = getRadius(count);
+                const style = getMarkerStyle(count, color);
+                const shouldShow = count > 0 || showEmptyCameras;
+
                 if (markers.has(key)) {
                     const marker = markers.get(key);
                     marker.setRadius(radius);
-                    marker.setStyle({ fillColor: color });
+                    marker.setStyle(style);
+
+                    // Show/hide based on empty camera toggle
+                    if (shouldShow) {
+                        if (!map.hasLayer(marker)) map.addLayer(marker);
+                    } else {
+                        if (map.hasLayer(marker)) map.removeLayer(marker);
+                    }
                 }
             });
         }
@@ -664,13 +707,17 @@
             });
         }
 
-        // Add custom legend control that is independent of Leaflet's control container 
+        // Add custom legend control that is independent of Leaflet's control container
         // to simplify positioning relative to our wrapper
         const legend = document.createElement('div');
         legend.className = 'legend';
         legend.innerHTML = `
             <h4>Vehicle Count per Frame</h4>
-            <div class="legend-item"><div class="legend-color" style="background:#2d5a87"></div> 0</div>
+            <label class="legend-toggle" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text-secondary);cursor:pointer;">
+                <input type="checkbox" id="show-empty-cameras" checked style="width:14px;height:14px;accent-color:var(--accent);cursor:pointer;">
+                Show empty cameras
+            </label>
+            <div class="legend-item" id="legend-zero"><div class="legend-color" style="background:transparent;border:2px solid #999;"></div> 0 (No detection)</div>
             <div class="legend-item"><div class="legend-color" style="background:#3498db"></div> 1-4</div>
             <div class="legend-item"><div class="legend-color" style="background:#5dade2"></div> 5-9</div>
             <div class="legend-item"><div class="legend-color" style="background:#85c1e9"></div> 10-19</div>
@@ -682,6 +729,13 @@
             </div>
         `;
         document.getElementById('map-container').appendChild(legend);
+
+        // Handle show empty cameras toggle
+        document.getElementById('show-empty-cameras').addEventListener('change', function() {
+            showEmptyCameras = this.checked;
+            document.getElementById('legend-zero').style.opacity = this.checked ? '1' : '0.4';
+            refreshMarkers();
+        });
 
         // === Controls Event Handlers ===
 

@@ -1,0 +1,71 @@
+/* Shared type, colour and motion tokens for the project page and both map apps. */
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('../fonts/eb-garamond.woff2') format('woff2');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('../fonts/eb-garamond-italic.woff2') format('woff2');
+  font-weight: 400 800;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Figtree';
+  src: url('../fonts/figtree.woff2') format('woff2');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-serif: 'EB Garamond', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --font-sans: 'Figtree', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, 'Liberation Mono', monospace;
+
+  /* Columbia University identity: Columbia Blue (Pantone 290) and the dark brand blue. */
+  --cu-blue: #b9d9eb;
+  --cu-navy: #1d4f91;
+
+  /* Limestone paper and navy ink. */
+  --paper: #f6f4ef;
+  --paper-2: #efebe3;
+  --paper-3: #fbfaf7;
+  --ink: #111b29;
+  --ink-2: #3a4555;
+  --ink-3: #636c79;
+  --rule: rgba(17, 27, 41, 0.14);
+  --rule-strong: rgba(17, 27, 41, 0.28);
+
+  /* Night surfaces follow the night basemap. */
+  --night: #0a121d;
+  --night-2: #111a26;
+  --night-3: #18202a;
+  --on-night: #eef1f4;
+  --on-night-2: #aeb8c4;
+  --on-night-3: #7f8b99;
+  --rule-night: rgba(214, 226, 238, 0.14);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-std: 300ms;
+  --dur-complex: 520ms;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

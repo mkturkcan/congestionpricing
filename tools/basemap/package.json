@@ -1,0 +1,15 @@
+{
+  "name": "congestionpricing-basemap-tools",
+  "private": true,
+  "type": "module",
+  "description": "Builds static/map/nyc.pmtiles, the self-hosted basemap for the project page.",
+  "scripts": {
+    "optimize": "node optimize-tiles.mjs nyc-extract.pmtiles ../../static/map/nyc.pmtiles"
+  },
+  "dependencies": {
+    "@mapbox/vector-tile": "^3.0.0",
+    "pbf": "^5.1.2",
+    "pmtiles": "^4.5.0",
+    "vt-pbf": "^3.1.3"
+  }
+}

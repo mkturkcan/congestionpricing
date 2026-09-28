@@ -1,836 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>NYC Traffic - Real-Time Viewer</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #f5f5f5;
-            --bg-secondary: #ffffff;
-            --bg-panel: rgba(255, 255, 255, 0.95);
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --accent: #1976d2;
-            --border: rgba(0, 0, 0, 0.1);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-        }
-
-        /* Container for Map and Panels to ensure relative positioning */
-        #map-container {
-            position: relative;
-            height: calc(100vh - 40px);
-            width: calc(100% - 40px);
-            margin: 20px;
-            overflow: hidden;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        #map {
-            height: 100%;
-            width: 100%;
-            z-index: 1;
-        }
-
-        .leaflet-container {
-            background: var(--bg-primary);
-        }
-
-        .panel {
-            background: var(--bg-panel);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            color: var(--text-primary);
-            z-index: 100;
-            position: absolute;
-            /* Positioned relative to #map-container */
-        }
-
-        .info-panel {
-            top: 20px;
-            left: 20px;
-            padding: 12px 16px;
-            width: fit-content;
-            min-width: 200px;
-        }
-
-        @media (max-width: 600px) {
-            .info-panel {
-                top: 15px;
-                left: 15px;
-                padding: 10px 14px;
-                min-width: auto;
-                font-size: 0.9em;
-            }
-        }
-
-        .about-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 4px;
-            padding-top: 6px;
-            border-top: 1px solid var(--border);
-            font-size: 11px;
-            color: var(--accent);
-            text-decoration: none;
-            transition: opacity 0.2s ease;
-        }
-
-        .about-link:hover {
-            opacity: 0.8;
-            text-decoration: underline;
-        }
-
-        .about-link svg {
-            width: 12px;
-            height: 12px;
-            fill: currentColor;
-        }
-
-        .info-panel h3 {
-            margin: 0 0 16px 0;
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .live-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ff4444;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        .live-indicator.connected {
-            background: #00c853;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.6;
-                transform: scale(0.9);
-            }
-        }
-
-        .stat {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 5px 0;
-            padding: 0px 0;
-            border-bottom: 1px solid var(--border);
-            gap: 12px;
-        }
-
-        .stat:last-of-type {
-            border-bottom: none;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-
-        .stat-value {
-            font-weight: 600;
-            font-size: 15px;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .connection-status {
-            font-size: 11px;
-            padding: 6px 10px;
-            border-radius: 6px;
-            margin-top: 12px;
-            text-align: center;
-        }
-
-        .connection-status.connected {
-            background: rgba(0, 200, 83, 0.2);
-            color: #00c853;
-        }
-
-        .connection-status.disconnected {
-            background: rgba(255, 68, 68, 0.2);
-            color: #ff4444;
-        }
-
-        .connection-status.connecting {
-            background: rgba(255, 193, 7, 0.2);
-            color: #ffc107;
-        }
-
-        .legend {
-            background: var(--bg-panel);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            color: var(--text-primary);
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            z-index: 100;
-            margin: 0 !important;
-            /* Override Leaflet default margins */
-        }
-
-        .legend h4 {
-            margin: 0 0 12px 0;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--accent);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin: 6px 0;
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-
-        .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            margin-right: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            flex-shrink: 0;
-        }
-
-        .update-flash {
-            animation: flash 0.5s ease-out;
-        }
-
-        @keyframes flash {
-            0% {
-                background: rgba(79, 195, 247, 0.3);
-            }
-
-            100% {
-                background: transparent;
-            }
-        }
-
-        /* View Controls Panel */
-        .controls-panel {
-            bottom: 20px;
-            left: 20px;
-            padding: 12px 16px;
-            min-width: 180px;
-        }
-
-        .controls-panel h4 {
-            margin: 0 0 10px 0;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .preset-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-
-        .preset-btn {
-            padding: 6px 12px;
-            font-size: 11px;
-            font-family: inherit;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .preset-btn:hover {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-
-        .preset-btn.active {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-
-        .advanced-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 0;
-            cursor: pointer;
-            font-size: 11px;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border);
-            margin-top: 8px;
-        }
-
-        .advanced-toggle:hover {
-            color: var(--text-primary);
-        }
-
-        .advanced-toggle .arrow {
-            transition: transform 0.2s ease;
-        }
-
-        .advanced-toggle.expanded .arrow {
-            transform: rotate(180deg);
-        }
-
-        .advanced-options {
-            display: none;
-            padding-top: 8px;
-        }
-
-        .advanced-options.visible {
-            display: block;
-        }
-
-        .controls-panel .checkbox-item {
-            display: flex !important;
-            align-items: center !important;
-            gap: 8px !important;
-            padding: 4px 0 !important;
-            font-size: 12px !important;
-            color: var(--text-secondary) !important;
-            cursor: pointer !important;
-            margin: 0 !important;
-            background: transparent !important;
-            border: none !important;
-        }
-
-        .controls-panel .checkbox-item:hover {
-            color: var(--text-primary) !important;
-        }
-
-        .controls-panel .checkbox-item input[type="checkbox"] {
-            width: 14px !important;
-            height: 14px !important;
-            min-width: 14px !important;
-            min-height: 14px !important;
-            accent-color: var(--accent) !important;
-            cursor: pointer !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            appearance: auto !important;
-            -webkit-appearance: checkbox !important;
-            -moz-appearance: checkbox !important;
-        }
-
-        @media (max-width: 600px) {
-            .controls-panel {
-                bottom: 15px;
-                left: 15px;
-                padding: 10px 12px;
-                min-width: 160px;
-            }
-
-            .preset-btn {
-                padding: 5px 10px;
-                font-size: 10px;
-            }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#f5f2ed">
+    <link rel="icon" type="image/x-icon" href="../static/images/favicon.ico">
+    <link rel="preload" href="../static/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="modulepreload" href="../static/vendor/maplibre/maplibre-gl.js">
+    <link rel="modulepreload" href="../static/vendor/maplibre/maplibre-gl-shared.js">
+    <link rel="stylesheet" href="../static/css/tokens.css">
+    <link rel="stylesheet" href="../static/vendor/maplibre/maplibre-gl.css">
+    <link rel="stylesheet" href="assets/app.css">
+    <link rel="stylesheet" href="assets/stream.css">
+    <script>
+        (function () {
+            var t = 'light';
+            try { t = localStorage.getItem('nyc-cp-theme') || 'light'; } catch (e) { }
+            document.documentElement.dataset.boot = t;
+        })();
+    </script>
+    <script src="../static/vendor/pmtiles/pmtiles.js" defer></script>
+    <script src="../static/vendor/mqtt/mqtt.min.js" defer></script>
+    <script type="module" src="assets/stream.js"></script>
 </head>
 
-<body>
-    <div id="map-container">
-        <div id="map"></div>
+<body data-theme="light">
+    <script>document.body.dataset.theme = document.documentElement.dataset.boot === 'dark' ? 'dark' : 'light';</script>
+    <svg class="icon-sprite" aria-hidden="true" focusable="false">
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 11v5.5M12 7.6v.1" /></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
+        <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" /></symbol>
+        <symbol id="i-home" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" /><circle cx="12" cy="12" r="2" /><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3" /></symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" /><path d="M12 2.8v2.4M12 18.8v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.8 12h2.4M18.8 12h2.4M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7" /></symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19.5 14.7A8 8 0 0 1 9.3 4.5a8 8 0 1 0 10.2 10.2Z" /></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5" /></symbol>
+    </svg>
 
-        <div class="panel info-panel">
-            <div class="stat">
-                <span class="stat-label">Last Update</span>
-                <span class="stat-value" id="last-update">--:--:--</span>
+    <div class="app js-intro" data-app>
+        <div id="map" class="app__map" role="region" aria-label="NYC Traffic - Real-Time Viewer"></div>
+
+        <div class="loading" id="loading" aria-hidden="true" data-fallback="../static/images/preview-stream.webp"><span class="loading__mark"></span></div>
+
+        <aside class="panel info info--live" aria-live="off">
+            <div class="live-stat">
+                <span class="live-dot" data-status="connecting" aria-hidden="true"></span>
+                <span class="live-stat__label">Last Update</span>
+                <span class="live-stat__value" id="last-update">--:--:--</span>
             </div>
-            <a href="https://mkturkcan.github.io/congestionpricing/" target="_blank" rel="noopener" class="about-link">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                </svg>
+            <a href="https://mkturkcan.github.io/congestionpricing/" target="_blank" rel="noopener" class="panel__about">
+                <svg class="icon" aria-hidden="true"><use href="#i-info" /></svg>
                 About this project
             </a>
-        </div>
+        </aside>
 
-        <div class="panel controls-panel">
-            <h4>View</h4>
-            <div class="preset-buttons">
-                <button class="preset-btn active" data-preset="all">All</button>
-                <button class="preset-btn" data-preset="cars">Cars</button>
-                <button class="preset-btn" data-preset="bikes">Bikes</button>
-                <button class="preset-btn" data-preset="buses">Buses</button>
-                <button class="preset-btn" data-preset="trucks">Trucks</button>
+        <section class="panel controls controls--live" data-sheet aria-labelledby="view-title">
+            <h2 class="control__label" id="view-title">View</h2>
+            <div class="presets" role="group" aria-labelledby="view-title">
+                <button type="button" class="preset" data-preset="all" aria-pressed="true">All</button>
+                <button type="button" class="preset" data-preset="cars" aria-pressed="false">Cars</button>
+                <button type="button" class="preset" data-preset="bikes" aria-pressed="false">Bikes</button>
+                <button type="button" class="preset" data-preset="buses" aria-pressed="false">Buses</button>
+                <button type="button" class="preset" data-preset="trucks" aria-pressed="false">Trucks</button>
             </div>
-            <div class="advanced-toggle" id="advanced-toggle">
+            <button type="button" class="advanced-toggle" id="advanced-toggle" aria-expanded="false" aria-controls="advanced-options">
                 <span>Advanced</span>
-                <span class="arrow">▼</span>
+                <svg class="icon" aria-hidden="true"><use href="#i-chevron" /></svg>
+            </button>
+            <div class="advanced-options" id="advanced-options" hidden>
+                <label class="check"><input type="checkbox" id="filter-bikes" checked><span class="check__box" aria-hidden="true"></span>Bicycles</label>
+                <label class="check"><input type="checkbox" id="filter-cars" checked><span class="check__box" aria-hidden="true"></span>Cars</label>
+                <label class="check"><input type="checkbox" id="filter-motorcycles" checked><span class="check__box" aria-hidden="true"></span>Motorcycles</label>
+                <label class="check"><input type="checkbox" id="filter-buses" checked><span class="check__box" aria-hidden="true"></span>Buses</label>
+                <label class="check"><input type="checkbox" id="filter-trucks" checked><span class="check__box" aria-hidden="true"></span>Trucks</label>
             </div>
-            <div class="advanced-options" id="advanced-options">
-                <label class="checkbox-item">
-                    <input type="checkbox" id="filter-bikes" checked> Bicycles
+        </section>
+
+        <section class="panel legend" data-legend aria-labelledby="legend-title">
+            <button class="legend__toggle" type="button" aria-expanded="false" aria-labelledby="legend-title" data-legend-toggle>
+                <span class="legend__scale" data-legend-scale aria-hidden="true"></span>
+                <svg class="icon" aria-hidden="true"><use href="#i-chevron" /></svg>
+            </button>
+            <div class="legend__body">
+                <h2 class="legend__title" id="legend-title">Vehicle Count per Frame</h2>
+                <label class="switch">
+                    <input type="checkbox" id="show-empty-cameras" checked>
+                    <span class="switch__track" aria-hidden="true"></span>
+                    Show empty cameras
                 </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" id="filter-cars" checked> Cars
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" id="filter-motorcycles" checked> Motorcycles
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" id="filter-buses" checked> Buses
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" id="filter-trucks" checked> Trucks
-                </label>
+                <ul class="legend__items" data-legend-items>
+                    <li class="legend__item" id="legend-zero"><span class="legend__swatch legend__swatch--ring"></span>0 (No detection)</li>
+                    <li class="legend__item"><span class="legend__swatch" data-bin="0"></span>1-4</li>
+                    <li class="legend__item"><span class="legend__swatch" data-bin="1"></span>5-9</li>
+                    <li class="legend__item"><span class="legend__swatch" data-bin="2"></span>10-19</li>
+                    <li class="legend__item"><span class="legend__swatch" data-bin="3"></span>20-29</li>
+                    <li class="legend__item"><span class="legend__swatch" data-bin="4"></span>30+</li>
+                </ul>
+                <div class="legend__foot">
+                    Circle size = vehicle count per frame<br>
+                    Color intensity = density
+                </div>
             </div>
+        </section>
+
+        <button class="panel theme-toggle" id="theme-toggle" type="button">
+            <svg class="icon icon--sun" aria-hidden="true"><use href="#i-sun" /></svg>
+            <svg class="icon icon--moon" aria-hidden="true"><use href="#i-moon" /></svg>
+            <span data-theme-label>Light Mode</span>
+        </button>
+
+        <div class="panel tools" role="group" aria-label="Map">
+            <button type="button" data-zoom-in aria-label="Zoom in"><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg></button>
+            <button type="button" data-zoom-out aria-label="Zoom out"><svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg></button>
+            <hr>
+            <button type="button" data-home aria-label="Reset view"><svg class="icon" aria-hidden="true"><use href="#i-home" /></svg></button>
         </div>
+
+        <div class="tip" data-tip role="tooltip"></div>
     </div>
-
     <script>
-        // MQTT Configuration (WebSocket)
-        const MQTT_BROKER = 'wss://broker.hivemq.com:8884/mqtt';
-        const MQTT_TOPIC = 'nyc/traffic/batch';
-
-        // Map setup
-        const map = L.map('map', { zoomControl: false }).setView([40.74, -73.99], 12);
-        L.control.zoom({ position: 'topright' }).addTo(map);
-
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap, &copy; CARTO'
-        }).addTo(map);
-
-        // Store markers by camera index
-        const markers = new Map();
-        // Store raw data for re-rendering when filters change
-        const markerData = new Map();
-
-        // Filter state
-        const filters = {
-            bikes: true,      // class_1
-            cars: true,       // class_2
-            motorcycles: true, // class_3
-            buses: true,      // class_5
-            trucks: true      // class_7
-        };
-
-        // Get filtered count based on active filters
-        function getFilteredCount(data) {
-            let count = 0;
-            if (filters.bikes) count += data.class_1_count || 0;
-            if (filters.cars) count += data.class_2_count || 0;
-            if (filters.motorcycles) count += data.class_3_count || 0;
-            if (filters.buses) count += data.class_5_count || 0;
-            if (filters.trucks) count += data.class_7_count || 0;
-            return count;
-        }
-
-        // Color function based on count
-        function getColor(count) {
-            if (count === 0) return '#999999';  // Gray for no vehicles
-            if (count < 5) return '#3498db';
-            if (count < 10) return '#5dade2';
-            if (count < 20) return '#85c1e9';
-            if (count < 30) return '#aed6f1';
-            return '#d4e6f1';
-        }
-
-        function getRadius(count) {
-            if (count === 0) return 3;  // Small dot for no vehicles
-            return Math.max(4, Math.min(20, 4 + count * 0.8));
-        }
-
-        // Get marker style based on count (hollow ring for 0)
-        function getMarkerStyle(count, color) {
-            if (count === 0) {
-                return {
-                    fillColor: 'transparent',
-                    color: color,
-                    weight: 1.5,
-                    fillOpacity: 0,
-                    opacity: 0.7
-                };
-            }
-            return {
-                fillColor: color,
-                color: '#fff',
-                weight: 1,
-                fillOpacity: 0.8,
-                opacity: 0.6
-            };
-        }
-
-        // State for hiding empty cameras
-        let showEmptyCameras = true;
-
-        // Flash effect - briefly increase opacity and add white glow
-        function flashMarker(marker) {
-            try {
-                const originalColor = marker.options.color;
-                const originalWeight = marker.options.weight;
-                const originalOpacity = marker.options.fillOpacity;
-
-                marker.setStyle({
-                    color: '#fff',
-                    weight: 3,
-                    fillOpacity: 1
-                });
-
-                setTimeout(() => {
-                    try {
-                        marker.setStyle({
-                            color: originalColor,
-                            weight: originalWeight,
-                            fillOpacity: originalOpacity
-                        });
-                    } catch (e) { }
-                }, 200);
-            } catch (e) { }
-        }
-
-        // Update or create marker
-        function updateMarker(data) {
-            try {
-                if (!data || !data.lat || !data.lon) return;
-
-                const key = data.data_source;
-                // Store raw data for filter updates
-                markerData.set(key, data);
-
-                const count = getFilteredCount(data);
-                const totalCount = (data.class_1_count || 0) + (data.class_2_count || 0) +
-                    (data.class_3_count || 0) + (data.class_5_count || 0) +
-                    (data.class_7_count || 0);
-
-                const color = getColor(count);
-                const radius = getRadius(count);
-
-                const popupContent = `
-                    <div style="font-family: Inter, sans-serif; padding: 4px;">
-                        <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">${data.name || 'Camera ' + key}</div>
-                        <div style="display: grid; grid-template-columns: auto auto; gap: 4px 12px; font-size: 12px;">
-                            <span style="color: #888;">Bicycles:</span><span>${data.class_1_count || 0}</span>
-                            <span style="color: #888;">Cars:</span><span style="font-weight:600;">${data.class_2_count || 0}</span>
-                            <span style="color: #888;">Motorcycles:</span><span>${data.class_3_count || 0}</span>
-                            <span style="color: #888;">Buses:</span><span>${data.class_5_count || 0}</span>
-                            <span style="color: #888;">Trucks:</span><span>${data.class_7_count || 0}</span>
-                            <span style="color: #888;">Total:</span><span style="font-weight:600;">${totalCount}</span>
-                        </div>
-                        <div style="font-size: 10px; color: #666; margin-top: 8px;">
-                            Updated: ${new Date(data.current_time).toLocaleTimeString()}
-                        </div>
-                    </div>
-                `;
-
-                const style = getMarkerStyle(count, color);
-                const shouldShow = count > 0 || showEmptyCameras;
-
-                if (markers.has(key)) {
-                    const marker = markers.get(key);
-                    marker.setRadius(radius);
-                    marker.setStyle(style);
-                    marker.setPopupContent(popupContent);
-
-                    // Show/hide based on empty camera toggle
-                    if (shouldShow) {
-                        if (!map.hasLayer(marker)) map.addLayer(marker);
-                        flashMarker(marker);
-                    } else {
-                        if (map.hasLayer(marker)) map.removeLayer(marker);
-                    }
-                } else {
-                    const marker = L.circleMarker([data.lat, data.lon], {
-                        radius: radius,
-                        ...style
-                    }).bindPopup(popupContent);
-
-                    if (shouldShow) {
-                        marker.addTo(map);
-                        flashMarker(marker);
-                    }
-                    markers.set(key, marker);
-                }
-            } catch (e) {
-                // Ignore any errors
-            }
-        }
-
-        // Refresh all markers with current filter state
-        function refreshMarkers() {
-            markerData.forEach((data, key) => {
-                const count = getFilteredCount(data);
-                const color = getColor(count);
-                const radius = getRadius(count);
-                const style = getMarkerStyle(count, color);
-                const shouldShow = count > 0 || showEmptyCameras;
-
-                if (markers.has(key)) {
-                    const marker = markers.get(key);
-                    marker.setRadius(radius);
-                    marker.setStyle(style);
-
-                    // Show/hide based on empty camera toggle
-                    if (shouldShow) {
-                        if (!map.hasLayer(marker)) map.addLayer(marker);
-                    } else {
-                        if (map.hasLayer(marker)) map.removeLayer(marker);
-                    }
-                }
-            });
-        }
-
-        // Update filter checkboxes to match state
-        function syncCheckboxes() {
-            document.getElementById('filter-bikes').checked = filters.bikes;
-            document.getElementById('filter-cars').checked = filters.cars;
-            document.getElementById('filter-motorcycles').checked = filters.motorcycles;
-            document.getElementById('filter-buses').checked = filters.buses;
-            document.getElementById('filter-trucks').checked = filters.trucks;
-        }
-
-        // Clear active state from all preset buttons
-        function clearPresetActive() {
-            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
-        }
-
-        function animateRadius(marker, from, to, duration) {
-            const startTime = performance.now();
-
-            function animate(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const eased = 1 - Math.pow(1 - progress, 3);
-                const newRadius = from + (to - from) * eased;
-                marker.setRadius(newRadius);
-
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-
-        // Update stats
-        function updateStats() {
-            document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
-        }
-
-        // MQTT Connection
-        let mqttClient = null;
-
-        function connectMQTT() {
-            mqttClient = mqtt.connect(MQTT_BROKER, {
-                clientId: 'nyc_traffic_viewer_' + Math.random().toString(16).substr(2, 8),
-                clean: true,
-                reconnectPeriod: 5000
-            });
-
-            mqttClient.on('connect', function () {
-                console.log('Connected to MQTT broker');
-
-                mqttClient.subscribe(MQTT_TOPIC, function (err) {
-                    if (err) {
-                        console.error('Subscribe error:', err);
-                    } else {
-                        console.log('Subscribed to', MQTT_TOPIC);
-                    }
-                });
-            });
-
-            mqttClient.on('message', function (topic, message) {
-                try {
-                    const data = JSON.parse(message.toString());
-
-                    // Process updates
-                    if (Array.isArray(data)) {
-                        data.forEach(item => updateMarker(item));
-                    } else {
-                        updateMarker(data);
-                    }
-
-                    updateStats();
-
-                } catch (e) {
-                    // Silently ignore parse errors
-                }
-            });
-
-            mqttClient.on('error', function (err) {
-                console.error('MQTT error:', err);
-            });
-
-            mqttClient.on('offline', function () {
-                console.log('MQTT offline, reconnecting...');
-            });
-
-            mqttClient.on('reconnect', function () {
-                console.log('MQTT reconnecting...');
-            });
-        }
-
-        // Add custom legend control that is independent of Leaflet's control container
-        // to simplify positioning relative to our wrapper
-        const legend = document.createElement('div');
-        legend.className = 'legend';
-        legend.innerHTML = `
-            <h4>Vehicle Count per Frame</h4>
-            <label class="legend-toggle" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text-secondary);cursor:pointer;">
-                <input type="checkbox" id="show-empty-cameras" checked style="width:14px;height:14px;accent-color:var(--accent);cursor:pointer;">
-                Show empty cameras
-            </label>
-            <div class="legend-item" id="legend-zero"><div class="legend-color" style="background:transparent;border:2px solid #999;"></div> 0 (No detection)</div>
-            <div class="legend-item"><div class="legend-color" style="background:#3498db"></div> 1-4</div>
-            <div class="legend-item"><div class="legend-color" style="background:#5dade2"></div> 5-9</div>
-            <div class="legend-item"><div class="legend-color" style="background:#85c1e9"></div> 10-19</div>
-            <div class="legend-item"><div class="legend-color" style="background:#aed6f1"></div> 20-29</div>
-            <div class="legend-item"><div class="legend-color" style="background:#d4e6f1"></div> 30+</div>
-            <div style="margin-top:10px;font-size:10px;color:#888;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;">
-                Circle size = vehicle count per frame<br>
-                Color intensity = density
-            </div>
-        `;
-        document.getElementById('map-container').appendChild(legend);
-
-        // Handle show empty cameras toggle
-        document.getElementById('show-empty-cameras').addEventListener('change', function() {
-            showEmptyCameras = this.checked;
-            document.getElementById('legend-zero').style.opacity = this.checked ? '1' : '0.4';
-            refreshMarkers();
+        // If the app module never ran (old browser, failed download), show a still of the map.
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.__appBoot) return;
+            var l = document.getElementById('loading');
+            l.classList.add('is-fallback');
+            l.style.backgroundImage = 'url("' + l.getAttribute('data-fallback') + '")';
         });
-
-        // === Controls Event Handlers ===
-
-        // Advanced toggle
-        document.getElementById('advanced-toggle').addEventListener('click', function () {
-            this.classList.toggle('expanded');
-            document.getElementById('advanced-options').classList.toggle('visible');
-        });
-
-        // Preset buttons
-        document.querySelectorAll('.preset-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const preset = this.dataset.preset;
-                clearPresetActive();
-                this.classList.add('active');
-
-                // Apply preset filter configuration
-                switch (preset) {
-                    case 'all':
-                        filters.bikes = true;
-                        filters.cars = true;
-                        filters.motorcycles = true;
-                        filters.buses = true;
-                        filters.trucks = true;
-                        break;
-                    case 'cars':
-                        filters.bikes = false;
-                        filters.cars = true;
-                        filters.motorcycles = false;
-                        filters.buses = false;
-                        filters.trucks = false;
-                        break;
-                    case 'bikes':
-                        filters.bikes = true;
-                        filters.cars = false;
-                        filters.motorcycles = true;  // Include motorcycles with bikes
-                        filters.buses = false;
-                        filters.trucks = false;
-                        break;
-                    case 'buses':
-                        filters.bikes = false;
-                        filters.cars = false;
-                        filters.motorcycles = false;
-                        filters.buses = true;
-                        filters.trucks = false;
-                        break;
-                    case 'trucks':
-                        filters.bikes = false;
-                        filters.cars = false;
-                        filters.motorcycles = false;
-                        filters.buses = false;
-                        filters.trucks = true;
-                        break;
-                }
-                syncCheckboxes();
-                refreshMarkers();
-            });
-        });
-
-        // Individual checkbox handlers
-        document.getElementById('filter-bikes').addEventListener('change', function () {
-            filters.bikes = this.checked;
-            clearPresetActive();
-            refreshMarkers();
-        });
-
-        document.getElementById('filter-cars').addEventListener('change', function () {
-            filters.cars = this.checked;
-            clearPresetActive();
-            refreshMarkers();
-        });
-
-        document.getElementById('filter-motorcycles').addEventListener('change', function () {
-            filters.motorcycles = this.checked;
-            clearPresetActive();
-            refreshMarkers();
-        });
-
-        document.getElementById('filter-buses').addEventListener('change', function () {
-            filters.buses = this.checked;
-            clearPresetActive();
-            refreshMarkers();
-        });
-
-        document.getElementById('filter-trucks').addEventListener('change', function () {
-            filters.trucks = this.checked;
-            clearPresetActive();
-            refreshMarkers();
-        });
-
-        // Start connection
-        connectMQTT();
-
-        // Periodic stats update
-        setInterval(updateStats, 5000);
     </script>
 </body>
 

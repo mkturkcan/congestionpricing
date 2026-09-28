@@ -1,313 +1,372 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
-  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
-  <!-- Replace the content tag with appropriate information -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NYC Congestion Pricing: A Vision-Based Analysis</title>
   <meta name="description" content="Analysis of NYC Congestion Pricing Impact using Vision-Based Methods">
-  <meta property="og:title" content="NYC Congestion Pricing: A Vision-Based Analysis" />
-  <meta property="og:description"
-    content="Computer vision-based analysis of traffic pattern changes in NYC following congestion pricing implementation in 2025" />
-  <meta property="og:url" content="https://mkturkcan.github.io/congestionpricing/" />
-  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="static/images/title.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-
-
-  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
-  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
-  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
-  <meta name="twitter:image" content="static/images/title.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <!-- Keywords for your paper to be indexed by-->
   <meta name="keywords"
     content="computer vision, urban planning, congestion pricing, traffic analysis, smart cities, urban mobility, policy impact assessment">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a121d">
+  <link rel="canonical" href="https://mkturkcan.github.io/congestionpricing/">
 
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NYC Congestion Pricing: A Vision-Based Analysis">
+  <meta property="og:description"
+    content="Computer vision-based analysis of traffic pattern changes in NYC following congestion pricing implementation in 2025">
+  <meta property="og:url" content="https://mkturkcan.github.io/congestionpricing/">
+  <meta property="og:image" content="https://mkturkcan.github.io/congestionpricing/static/images/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt"
+    content="Changes in traffic patterns for the congestion pricing, as obtained through computer vision-based analysis.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NYC Congestion Pricing: A Vision-Based Analysis">
+  <meta name="twitter:description"
+    content="Computer vision-based analysis of traffic pattern changes in NYC following congestion pricing implementation in 2025">
+  <meta name="twitter:image" content="https://mkturkcan.github.io/congestionpricing/static/images/og-card.jpg">
 
-  <title>NYC Congestion Pricing: A Vision-Based Analysis</title>
   <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
-
-  <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="preload" href="static/fonts/eb-garamond.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="static/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="modulepreload" href="static/vendor/maplibre/maplibre-gl.js">
+  <link rel="modulepreload" href="static/vendor/maplibre/maplibre-gl-shared.js">
+  <link rel="stylesheet" href="static/css/tokens.css">
+  <link rel="stylesheet" href="static/vendor/maplibre/maplibre-gl.css">
   <link rel="stylesheet" href="static/css/index.css">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
-  <script defer src="static/js/fontawesome.all.min.js"></script>
-  <script src="static/js/bulma-carousel.min.js"></script>
-  <script src="static/js/bulma-slider.min.js"></script>
-  <script src="static/js/index.js"></script>
+  <script>
+    // Content is hidden for scripted reveals only while the page script runs; if it
+    // never does (old browser, failed download), show everything as static content.
+    document.documentElement.classList.add('js');
+    document.addEventListener('DOMContentLoaded', function () {
+      if (!window.__cpBoot) document.documentElement.classList.remove('js');
+    });
+  </script>
+  <script src="static/vendor/pmtiles/pmtiles.js" defer></script>
+  <script type="module" src="static/js/index.js"></script>
 </head>
 
 <body>
+  <svg class="icon-sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-paper" viewBox="0 0 24 24"><path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" /><path d="M14 3v5h5M9.5 12.5h6M9.5 16h6" /></symbol>
+    <symbol id="i-data" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7" ry="2.5" /><path d="M5 5.5v6.5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5.5M5 12v6.5C5 19.9 8.1 21 12 21s7-1.1 7-2.5V12" /></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v15M6 13l6 6 6-6" /></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M8 16 17 7M9 7h8v8" /></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="m3 6.5 6-2.5 6 2.5 6-2.5v13.5l-6 2.5-6-2.5-6 2.5z" /><path d="M9 4v13.5M15 6.5V20" /></symbol>
+    <symbol id="i-live" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2" /><path d="m16 10.5 5-3v9l-5-3" /></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2" /><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5" /></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" /></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></symbol>
+    <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" /><path d="m15 15 5 5M10.5 8v5M8 10.5h5" /></symbol>
+  </svg>
 
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <section class="hero">
-    <div class="hero-body" style="padding-bottom: 0px;">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">NYC Congestion Pricing: <br>A Vision-Based Analysis</h1>
+  <header class="site-nav" data-nav>
+    <div class="site-nav__inner">
+      <a class="site-nav__brand" href="#top">NYC Congestion Pricing</a>
+      <nav class="site-nav__links" aria-label="Primary">
+        <a href="https://arxiv.org/abs/2602.03015" target="_blank" rel="noopener">Paper</a>
+        <a href="https://huggingface.co/datasets/mehmetkeremturkcan/nyc-congestionpricing-cv" target="_blank"
+          rel="noopener">Dataset</a>
+        <a class="site-nav__app" href="interactive/index.html" target="_blank" rel="noopener">Interactive Map</a>
+        <a class="site-nav__app" href="interactive/stream.html" target="_blank" rel="noopener">Real Time Map</a>
+      </nav>
+    </div>
+  </header>
 
-            <div class="publication-links buttons is-centered" style="margin-top: 2rem; margin-bottom: 1.5rem;">
-              <a href="https://arxiv.org/abs/2602.03015" target="_blank" class="interactive-map-button mx-2">
-                <span class="icon">
-                  <i class="fas fa-file-alt"></i>
-                </span>
-                <span>Paper</span>
-              </a>
-              <a href="https://huggingface.co/datasets/mehmetkeremturkcan/nyc-congestionpricing-cv" target="_blank"
-                class="interactive-map-button mx-2">
-                <span class="icon">
-                  <i class="ai ai-open-data" style="font-size: 1.2em;"></i>
-                </span>
-                <span>Dataset</span>
-              </a>
-              <a href="#interactive-viz" class="interactive-map-button mx-2">
-                <span class="icon">
-                  <i class="fas fa-arrow-down"></i>
-                </span>
-                <span>Explore</span>
-              </a>
+  <section class="hero" id="top" data-hero>
+    <div class="hero__content">
+      <p class="hero__eyebrow" data-intro>Columbia University</p>
+      <h1 class="hero__title">
+        <span class="line"><span class="line__inner" data-intro>NYC Congestion Pricing:</span></span>
+        <span class="line line--italic"><span class="line__inner" data-intro>A <span class="nowrap">Vision-Based</span> Analysis</span></span>
+      </h1>
+      <div class="hero__actions" data-intro>
+        <a class="btn btn--primary" href="https://arxiv.org/abs/2602.03015" target="_blank" rel="noopener">
+          <svg class="icon" aria-hidden="true"><use href="#i-paper" /></svg><span>Paper</span>
+        </a>
+        <a class="btn btn--ghost" href="https://huggingface.co/datasets/mehmetkeremturkcan/nyc-congestionpricing-cv"
+          target="_blank" rel="noopener">
+          <svg class="icon" aria-hidden="true"><use href="#i-data" /></svg><span>Dataset</span>
+        </a>
+        <a class="btn btn--text" href="#interactive-viz">
+          <span>Explore</span><svg class="icon" aria-hidden="true"><use href="#i-down" /></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero__legend" data-intro aria-hidden="true">
+      <div class="scale">
+        <span class="scale__end">&lt; -30%</span>
+        <span class="scale__bar" data-hero-scale></span>
+        <span class="scale__end">&gt; +30%</span>
+      </div>
+      <div class="hero__legend-key"><span class="key-line"></span>CRZ (Congestion Relief Zone)</div>
+    </div>
+    <div class="hero__cue" aria-hidden="true"><span></span></div>
+
+    <!-- The map sits last in the DOM so its attribution follows the hero actions in tab order. -->
+    <div class="hero__map" data-hero-map></div>
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="hero__annotation" data-crz-note aria-hidden="true">CRZ (Congestion Relief Zone)</div>
+  </section>
+
+  <main id="main">
+    <section class="figure-section" aria-label="Overview">
+      <div class="wrap">
+        <figure class="teaser" data-reveal>
+          <button class="teaser__frame" type="button" data-lightbox-open aria-haspopup="dialog">
+            <picture>
+              <source srcset="static/images/title.webp" type="image/webp">
+              <img src="static/images/title.png" width="1227" height="929"
+                alt="Changes in traffic patterns for the congestion pricing, as obtained through computer vision-based analysis."
+                loading="lazy" decoding="async">
+            </picture>
+            <span class="teaser__zoom" aria-hidden="true"><svg class="icon"><use href="#i-zoom" /></svg></span>
+          </button>
+          <figcaption class="teaser__caption lede" data-reveal>
+            Using a computer vision framework applied to a network of 910 NYC traffic cameras, we analyze traffic
+            patterns using year-to-year data from November 14 to January 4 (before and after) to look at the effects
+            of the pricing. The visualization above depicts relative traffic volume changes at key intersections
+            throughout Manhattan and New York, with circle diameter representing magnitude of change and color
+            indicating direction (green for reduction, red for increase).
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="results" aria-labelledby="results-title" data-results>
+      <div class="wrap">
+        <div class="results__head" data-reveal>
+          <h2 class="results__title" id="results-title" data-chart-title>Change in Peak Observed Car Count per Frame
+            (%)</h2>
+          <div class="results__controls">
+            <div class="segmented" role="radiogroup" aria-label="Metric" data-control="metric">
+              <span class="segmented__label" aria-hidden="true">Metric</span>
+              <button type="button" role="radio" aria-checked="true" data-value="pct">Percentage Change (%)</button>
+              <button type="button" role="radio" aria-checked="false" data-value="raw">Absolute Change
+                (Count)</button>
+            </div>
+            <div class="segmented" role="radiogroup" aria-label="Day Type" data-control="day">
+              <span class="segmented__label" aria-hidden="true">Day Type</span>
+              <button type="button" role="radio" aria-checked="true" data-value="all">All Week</button>
+              <button type="button" role="radio" aria-checked="false" data-value="weekday">Weekdays</button>
+              <button type="button" role="radio" aria-checked="false" data-value="weekend">Weekends</button>
             </div>
           </div>
         </div>
+
+        <div class="results__body">
+          <div class="results__stats" data-reveal>
+            <div class="stat stat--crz">
+              <span class="stat__label">CRZ (Congestion Relief Zone)</span>
+              <span class="stat__value" data-stat="crz">&nbsp;</span>
+            </div>
+            <div class="stat">
+              <span class="stat__label">non-CRZ</span>
+              <span class="stat__value" data-stat="control">&nbsp;</span>
+            </div>
+            <p class="results__n" data-sample-size>&nbsp;</p>
+          </div>
+          <div class="swarm" data-swarm data-reveal>
+            <div class="swarm__tooltip" data-swarm-tip hidden></div>
+          </div>
+        </div>
       </div>
-    </div>
-    </div>
-  </section>
+    </section>
 
-
-  <!-- Teaser video-->
-  <section class="hero teaser">
-    <div class="container is-max-desktop">
-      <div class="hero-body" style="padding-bottom: 0px;">
-        <img src="static/images/title.png"
-          alt="Changes in traffic patterns for the congestion pricing, as obtained through computer vision-based analysis."
-          width="50%" class="center" />
-        <h2 class="subtitle has-text-centered">
-          Using a computer vision framework applied to a network of 910 NYC traffic cameras, we analyze traffic patterns
-          using year-to-year data from November 14 to January 4 (before and after) to look at the effects of the
-          pricing. The visualization above depicts
-          relative traffic volume changes at key intersections throughout Manhattan and New York, with circle diameter
-          representing
-          magnitude of change and color indicating direction (green for reduction, red for increase).
-        </h2>
-      </div>
-    </div>
-  </section>
-  <!-- End teaser video -->
-
-
-  <!-- Interactive buttons section -->
-  <section class="section" id="interactive-viz">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          <h2 class="title is-4">Launch Interactive Visualization</h2>
-          <div class="buttons is-centered mt-4">
-            <a href="interactive/index.html" target="_blank" class="interactive-map-button mx-2">
-              <span class="icon">
-                <i class="fas fa-map"></i>
-              </span>
+    <section class="launch" id="interactive-viz" aria-labelledby="launch-title">
+      <div class="wrap">
+        <h2 class="section-title" id="launch-title" data-reveal>Launch Interactive Visualization</h2>
+        <div class="launch__grid">
+          <a class="launch-card launch-card--primary" href="interactive/index.html" target="_blank" rel="noopener"
+            data-reveal>
+            <span class="launch-card__media">
+              <picture>
+                <source srcset="static/images/preview-interactive.webp" type="image/webp">
+                <img src="static/images/preview-interactive.jpg" width="1600" height="1000" alt="" loading="lazy"
+                  decoding="async">
+              </picture>
+            </span>
+            <span class="launch-card__label">
+              <svg class="icon" aria-hidden="true"><use href="#i-map" /></svg>
               <span>Interactive Map</span>
-            </a>
-            <a href="interactive/stream.html" target="_blank" class="interactive-map-button mx-2">
-              <span class="icon">
-                <i class="fas fa-video"></i>
-              </span>
+              <svg class="icon launch-card__arrow" aria-hidden="true"><use href="#i-external" /></svg>
+            </span>
+          </a>
+          <a class="launch-card" href="interactive/stream.html" target="_blank" rel="noopener" data-reveal>
+            <span class="launch-card__media">
+              <picture>
+                <source srcset="static/images/preview-stream.webp" type="image/webp">
+                <img src="static/images/preview-stream.jpg" width="1600" height="1000" alt="" loading="lazy"
+                  decoding="async">
+              </picture>
+              <span class="live-dot" aria-hidden="true"></span>
+            </span>
+            <span class="launch-card__label">
+              <svg class="icon" aria-hidden="true"><use href="#i-live" /></svg>
               <span>Real Time Map</span>
-            </a>
-          </div>
-          <p class="help mt-4">Click on the button to open the interactive visualization in a new tab.</p>
+              <svg class="icon launch-card__arrow" aria-hidden="true"><use href="#i-external" /></svg>
+            </span>
+          </a>
+        </div>
+        <p class="launch__help" data-reveal>Click on the button to open the interactive visualization in a new tab.</p>
+      </div>
+    </section>
+
+    <section class="prose-section" aria-labelledby="abstract-title">
+      <div class="wrap split">
+        <h2 class="rail-title" id="abstract-title" data-reveal>Abstract</h2>
+        <div class="split__body">
+          <p class="lede lede--abstract" data-reveal>
+            We examine the impact of New York City’s congestion pricing program through automated analysis of traffic
+            camera data. Our computer vision pipeline processes footage from over 900 cameras distributed throughout
+            Manhattan, comparing traffic patterns using year-to-year data from November 14 to January 4. By excluding
+            anomalous periods such as holidays, we establish baseline traffic patterns and identify
+            systematic changes in vehicle density across the monitored region. This ongoing
+            research project will provide regular updates to track long-term evolution of urban mobility patterns in
+            response to the pricing policy.
+          </p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-
-
-
-
-
-
-
-
-
-
-  <!-- Paper abstract -->
-  <section class="section hero is-light">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          <h2 class="title is-3">Abstract</h2>
-          <div class="content has-text-justified">
-            <p>
-              We examine the impact of New York City's congestion pricing program through automated analysis of traffic
-              camera data. Our computer vision pipeline processes footage from over 900 cameras distributed throughout
-              Manhattan, comparing traffic patterns using year-to-year data from November 14 to January 4. By excluding
-              anomalous periods such as holidays, we establish baseline traffic patterns and identify
-              systematic changes in vehicle density across the monitored region. This ongoing
-              research project will provide regular updates to track long-term evolution of urban mobility patterns in
-              response to the pricing policy.
-            </p>
-          </div>
+    <section class="prose-section prose-section--limits" aria-labelledby="limits-title">
+      <div class="wrap split">
+        <h2 class="rail-title" id="limits-title" data-reveal>Current Limitations</h2>
+        <div class="split__body">
+          <p class="limits__lead" data-reveal>Our approach has some important limitations:</p>
+          <ol class="limits">
+            <li data-reveal><span class="limits__num" aria-hidden="true">i</span>
+              <p>The computer vision system includes stationary vehicles in traffic density calculations, which may
+                affect measurements in areas with high street parking density</p>
+            </li>
+            <li data-reveal><span class="limits__num" aria-hidden="true">ii</span>
+              <p>The current implementation analyzes aggregate traffic flow without distinguishing between individual
+                lanes or travel directions</p>
+            </li>
+            <li data-reveal><span class="limits__num" aria-hidden="true">iii</span>
+              <p>Camera-based instantaneous vehicle counts serve as a proxy measure and may not directly correlate with
+                actual transit times or congestion levels</p>
+            </li>
+          </ol>
         </div>
       </div>
-    </div>
-  </section>
-  <!-- End paper abstract -->
-  <section class="hero teaser"></section>
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <h2 class="title has-text-centered">Current Limitations</h2>
+    </section>
 
-      <h2 class="subtitle has-text-centered">
-        Our approach has some important limitations: (i) the computer vision system includes stationary vehicles in
-        traffic
-        density calculations, which may affect measurements in areas with high street parking density, (ii) the current
-        implementation
-        analyzes aggregate traffic flow without distinguishing between individual lanes or travel directions, (iii)
-        camera-based instantaneous vehicle counts serve as a proxy measure and may not directly correlate with actual
-        transit times or congestion levels.
-      </h2>
-    </div>
-  </div>
-  </section>
-
-
-
-
-  <section class="hero">
-    <div class="hero-body" style="padding-bottom: 0px;">
-      <div class="container is-max-desktop">
-        <h2 class="title has-text-centered">Research Team</h2>
-
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <div class="is-size-5 publication-authors">
-              <!-- Paper authors -->
-              <span class="author-block">
-                <a href="https://keremturkcan.com" target="_blank">Mehmet Kerem Turkcan</a>,
-              </span>
-              <span class="author-block">
-                <a href="https://www.cs.tau.ac.il/~jhonatant/" target="_blank">Jhonatan Tavori</a>,
-              </span>
-              <span class="author-block">
-                <a href="https://www.ee.columbia.edu/~jghaderi/" target="_blank">Javad Ghaderi</a>,
-              </span>
-              <span class="author-block">
-                <a href="https://wimnet.ee.columbia.edu/people/gil-zussman/" target="_blank">Gil Zussman</a>,
-              </span>
-              <span class="author-block">
-                <a href="https://www.aidl.ee.columbia.edu/" target="_blank">Zoran Kostic</a>,
-              </span>
-              <span class="author-block">
-                <a href="https://www.columbia.edu/cu/civileng/smyth/index.html" target="_blank">Andrew Smyth</a>
-              </span>
-              <div class="is-size-5 publication-authors">
-                <span class="author-block">Columbia University</span>
-              </div>
-            </div>
-          </div>
+    <section class="team" aria-labelledby="team-title">
+      <div class="wrap split">
+        <h2 class="rail-title" id="team-title" data-reveal>Research Team</h2>
+        <div class="split__body">
+          <ul class="team__list">
+            <li data-reveal><a href="https://keremturkcan.com" target="_blank" rel="noopener">Mehmet Kerem Turkcan</a>
+            </li>
+            <li data-reveal><a href="https://www.cs.tau.ac.il/~jhonatant/" target="_blank" rel="noopener">Jhonatan
+                Tavori</a></li>
+            <li data-reveal><a href="https://www.ee.columbia.edu/~jghaderi/" target="_blank" rel="noopener">Javad
+                Ghaderi</a></li>
+            <li data-reveal><a href="https://wimnet.ee.columbia.edu/people/gil-zussman/" target="_blank"
+                rel="noopener">Gil Zussman</a></li>
+            <li data-reveal><a href="https://www.aidl.ee.columbia.edu/" target="_blank" rel="noopener">Zoran
+                Kostic</a></li>
+            <li data-reveal><a href="https://www.columbia.edu/cu/civileng/smyth/index.html" target="_blank"
+                rel="noopener">Andrew Smyth</a></li>
+          </ul>
+          <p class="team__affiliation" data-reveal>Columbia University</p>
         </div>
       </div>
-    </div>
-    </div>
-  </section>
-  <section class="section">
-    <div class="container">
-      <div class="logo-grid">
-        <div class="logo-item">
-          <div class="logo-container">
-            <a href="https://www.columbia.edu" target="_blank" rel="noopener noreferrer">
-              <img src="static/images/CU.png" alt="Columbia University">
-            </a>
-          </div>
-        </div>
-        <div class="logo-item">
-          <div class="logo-container">
-            <a href="https://cs3-erc.org" target="_blank" rel="noopener noreferrer">
-              <img src="static/images/css.png" alt="Center for Smart Streetscapes">
-            </a>
-          </div>
-        </div>
-        <div class="logo-item">
-          <div class="logo-container">
-            <a href="https://www.cosmos-lab.org/" target="_blank" rel="noopener noreferrer">
-              <img src="static/images/cosmos_logo.svg" alt="COSMOS Lab">
-            </a>
-          </div>
-        </div>
-        <div class="logo-item2">
-          <div class="logo-container">
-            <a href="https://digitaltwin.engineering.columbia.edu/" target="_blank" rel="noopener noreferrer">
-              <img src="static/images/UHT.jpg" alt="Urban Hybrid Twin">
-            </a>
-          </div>
-        </div>
+      <div class="wrap">
+        <ul class="partners" data-reveal>
+          <li><a href="https://www.columbia.edu" target="_blank" rel="noopener noreferrer"><img
+                src="static/images/CU.png" width="1252" height="187" alt="Columbia University" loading="lazy"></a>
+          </li>
+          <li><a href="https://cs3-erc.org" target="_blank" rel="noopener noreferrer"><img
+                src="static/images/css-logo.webp" width="800" height="281" alt="Center for Smart Streetscapes"
+                loading="lazy"></a></li>
+          <li><a href="https://www.cosmos-lab.org/" target="_blank" rel="noopener noreferrer"><img
+                src="static/images/cosmos_logo.svg" width="547" height="77" alt="COSMOS Lab" loading="lazy"></a></li>
+          <li><a href="https://digitaltwin.engineering.columbia.edu/" target="_blank" rel="noopener noreferrer"><img
+                class="partners__uht" src="static/images/UHT.jpg" width="400" height="256" alt="Urban Hybrid Twin"
+                loading="lazy"></a></li>
+        </ul>
       </div>
-    </div>
-  </section>
+    </section>
 
+    <section class="links-section" aria-labelledby="links-title">
+      <div class="wrap split">
+        <h2 class="rail-title" id="links-title" data-reveal>Related Links</h2>
+        <ul class="link-index split__body">
+          <li data-reveal><a href="https://www.nytimes.com/interactive/2026/01/05/upshot/congestion-pricing-one-year.html"
+              target="_blank" rel="noopener"><span class="link-index__title">27 Million Fewer Car Trips: Life After a
+                Year of Congestion Pricing</span><span class="link-index__source">NY Times</span></a></li>
+          <li data-reveal><a href="https://www.mta.info/document/195631" target="_blank" rel="noopener"><span
+                class="link-index__title">Congestion Relief Zone Tolling First Evaluation Report</span><span
+                class="link-index__source">MTA</span></a></li>
+          <li data-reveal><a href="https://www.nber.org/papers/w33584" target="_blank" rel="noopener"><span
+                class="link-index__title">The Short-Run Effects of Congestion Pricing in New York City</span><span
+                class="link-index__source">NBER</span></a></li>
+          <li data-reveal><a href="https://sps.columbia.edu/news/success-and-challenges-congestion-pricing-new-york-city"
+              target="_blank" rel="noopener"><span class="link-index__title">The Success and Challenges of Congestion
+                Pricing in New York City</span><span class="link-index__source">Columbia</span></a></li>
+          <li data-reveal><a href="https://www.nature.com/articles/s44407-025-00037-2" target="_blank"
+              rel="noopener"><span class="link-index__title">A first look into congestion pricing in the United
+                States: PM 2.5 impacts</span><span class="link-index__source">Nature</span></a></li>
+          <li data-reveal><a href="https://news.cornell.edu/stories/2025/12/congestion-pricing-improved-air-quality-nyc-and-suburbs"
+              target="_blank" rel="noopener"><span class="link-index__title">Congestion pricing improved air quality
+                in NYC and suburbs</span><span class="link-index__source">Cornell</span></a></li>
+          <li data-reveal><a href="https://metrics.mta.info/?cbdtp/vehiclereductions" target="_blank"
+              rel="noopener"><span class="link-index__title">MTA Vehicle Reductions Dashboard</span></a></li>
+          <li data-reveal><a
+              href="https://data.ny.gov/Transportation/MTA-Congestion-Relief-Zone-Vehicle-Entries-Beginni/t6yz-b64h/about_data"
+              target="_blank" rel="noopener"><span class="link-index__title">MTA Congestion Relief Zone Vehicle
+                Entries Data</span><span class="link-index__source">NY State</span></a></li>
+          <li data-reveal><a href="https://www.mta.info/article/most-detailed-view-of-nyc-traffic-so-far"
+              target="_blank" rel="noopener"><span class="link-index__title">The most detailed view of NYC traffic (so
+                far)</span><span class="link-index__source">MTA</span></a></li>
+          <li data-reveal><a
+              href="https://inrix.com/blog/2025-kicks-off-right-cordon-based-congestion-pricing-implemented-in-new-york-city/"
+              target="_blank" rel="noopener"><span class="link-index__title">2025 Kicks Off Right: Cordon-Based
+                Congestion Pricing Implemented in New York City</span><span
+                class="link-index__source">INRIX</span></a></li>
+          <li data-reveal><a
+              href="https://www.msn.com/en-us/urban-infrastructure/transportation-infrastructure/new-york-says-1-million-fewer-vehicles-have-entered-manhattan-since-congestion-pricing-start/ar-AA1y5eBF"
+              target="_blank" rel="noopener"><span class="link-index__title">New York says 1 million fewer vehicles
+                have entered Manhattan since congestion pricing start</span><span
+                class="link-index__source">MSN</span></a></li>
+          <li data-reveal><a href="https://www.congestion-pricing-tracker.com/" target="_blank" rel="noopener"><span
+                class="link-index__title">Congestion Pricing Tracker</span></a></li>
+        </ul>
+      </div>
+    </section>
 
-  <section class="section">
-    <div class="container is-max-desktop">
-      <h2 class="title has-text-centered">Related Links</h2>
-      <ul class="content has-text-centered">
-        <li><a href="https://www.nytimes.com/interactive/2026/01/05/upshot/congestion-pricing-one-year.html"
-            target="_blank">27 Million Fewer Car Trips: Life After a Year of Congestion Pricing (NY Times)</a></li>
-        <li><a href="https://www.mta.info/document/195631" target="_blank">Congestion Relief Zone Tolling First
-            Evaluation Report (MTA)</a></li>
-        <li><a href="https://www.nber.org/papers/w33584" target="_blank">The Short-Run Effects of Congestion Pricing in
-            New York City (NBER)</a></li>
-        <li><a href="https://sps.columbia.edu/news/success-and-challenges-congestion-pricing-new-york-city"
-            target="_blank">The Success and Challenges of Congestion Pricing in New York City (Columbia)</a></li>
-        <li><a href="https://www.nature.com/articles/s44407-025-00037-2" target="_blank">A first look into congestion
-            pricing in the United States: PM 2.5 impacts (Nature)</a></li>
-        <li><a href="https://news.cornell.edu/stories/2025/12/congestion-pricing-improved-air-quality-nyc-and-suburbs"
-            target="_blank">Congestion pricing improved air quality in NYC and suburbs (Cornell)</a></li>
-        <li><a href="https://metrics.mta.info/?cbdtp/vehiclereductions" target="_blank">MTA Vehicle Reductions
-            Dashboard</a></li>
-        <li><a
-            href="https://data.ny.gov/Transportation/MTA-Congestion-Relief-Zone-Vehicle-Entries-Beginni/t6yz-b64h/about_data"
-            target="_blank">MTA Congestion Relief Zone Vehicle Entries Data (NY State)</a></li>
-        <li><a href="https://www.mta.info/article/most-detailed-view-of-nyc-traffic-so-far" target="_blank">The most
-            detailed view of NYC traffic (so far) (MTA)</a></li>
-        <li><a
-            href="https://inrix.com/blog/2025-kicks-off-right-cordon-based-congestion-pricing-implemented-in-new-york-city/"
-            target="_blank">2025 Kicks Off Right: Cordon-Based Congestion Pricing Implemented in New York City
-            (INRIX)</a></li>
-        <li><a
-            href="https://www.msn.com/en-us/urban-infrastructure/transportation-infrastructure/new-york-says-1-million-fewer-vehicles-have-entered-manhattan-since-congestion-pricing-start/ar-AA1y5eBF"
-            target="_blank">New York says 1 million fewer vehicles have entered Manhattan since congestion pricing start
-            (MSN)</a></li>
-        <li><a href="https://www.congestion-pricing-tracker.com/" target="_blank">Congestion Pricing Tracker</a></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section" id="BibTeX">
-    <div class="container is-max-desktop content">
-      <h2 class="title">References</h2>
-      <p>If you use this dataset or code in your research, please kindly cite the following works:</p>
-      <pre><code>@misc{mehmet_kerem_turkcan_2025,
+    <section class="refs" id="BibTeX" aria-labelledby="refs-title">
+      <div class="wrap split">
+        <h2 class="rail-title" id="refs-title" data-reveal>References</h2>
+        <div class="split__body">
+          <p class="refs__intro" data-reveal>If you use this dataset or code in your research, please kindly cite the
+            following works:</p>
+          <div class="bib" data-reveal>
+            <button class="bib__copy" type="button" data-copy aria-label="Copy">
+              <svg class="icon icon--copy" aria-hidden="true"><use href="#i-copy" /></svg>
+              <svg class="icon icon--check" aria-hidden="true"><use href="#i-check" /></svg>
+            </button>
+<pre><code>@misc{mehmet_kerem_turkcan_2025,
   author = {Mehmet Kerem Turkcan},
   title = {nyc-congestionpricing-cv (Revision 9d9dd30)},
   year = 2025,
   url = {https://huggingface.co/datasets/mehmetkeremturkcan/nyc-congestionpricing-cv},
   doi = {10.57967/hf/4448},
   publisher = {Hugging Face}
-}
-
-@inproceedings{10.1145/3769102.3770618,
+}</code></pre>
+          </div>
+          <div class="bib" data-reveal>
+            <button class="bib__copy" type="button" data-copy aria-label="Copy">
+              <svg class="icon icon--copy" aria-hidden="true"><use href="#i-copy" /></svg>
+              <svg class="icon icon--check" aria-hidden="true"><use href="#i-check" /></svg>
+            </button>
+<pre><code>@inproceedings{10.1145/3769102.3770618,
   author = {Ghasemi, Mahshid and Fu, Yongjie and Ouyang, Xinyu and Wang, Peiran and Turkcan, Mehmet Kerem and Tavori, Jhonatan and Kleisarchaki, Sofia and Calmant, Thomas and G\"{u}rgen, Levent and Kostic, Zoran and Di, Xuan Sharon and Zussman, Gil and Ghaderi, Javad},
   title = {Real-Time Video Analytics for Urban Safety: Deployment over Edge and End Devices},
   year = {2025},
@@ -319,63 +378,63 @@
   articleno = {14},
   numpages = {17},
   series = {SEC '25}
-}
-
-@misc{turkcan2026visionbasedanalysiscongestionpricing,
-      title={A Vision-Based Analysis of Congestion Pricing in New York City}, 
+}</code></pre>
+          </div>
+          <div class="bib" data-reveal>
+            <button class="bib__copy" type="button" data-copy aria-label="Copy">
+              <svg class="icon icon--copy" aria-hidden="true"><use href="#i-copy" /></svg>
+              <svg class="icon icon--check" aria-hidden="true"><use href="#i-check" /></svg>
+            </button>
+<pre><code>@misc{turkcan2026visionbasedanalysiscongestionpricing,
+      title={A Vision-Based Analysis of Congestion Pricing in New York City},
       author={Mehmet Kerem Turkcan and Jhonatan Tavori and Javad Ghaderi and Gil Zussman and Zoran Kostic and Andrew Smyth},
       year={2026},
       eprint={2602.03015},
       archivePrefix={arXiv},
       primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2602.03015}, 
+      url={https://arxiv.org/abs/2602.03015},
 }</code></pre>
-    </div>
-  </section>
-
-  <div class="column has-text-centered">
-
-    <footer class="footer">
-      <div class="container">
-        <div class="columns is-centered">
-          <div class="column is-8">
-            <div class="content">
-
-              <p>
-                This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template"
-                  target="_blank">Academic Project Page Template</a> which was adopted from the <a
-                  href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
-                You are free to borrow the source code of this website, we just ask that you link back to this page in
-                the footer. <br> This website is licensed under a <a rel="license"
-                  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
-                  Commons Attribution-ShareAlike 4.0 International License</a>.
-              </p>
-
-            </div>
           </div>
         </div>
       </div>
-    </footer>
+    </section>
+  </main>
 
-    <!-- Statcounter tracking code -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>
+        This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template"
+          target="_blank" rel="noopener">Academic Project Page Template</a> which was adopted from the <a
+          href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a> project page.
+        You are free to borrow the source code of this website, we just ask that you link back to this page in
+        the footer. <br> This website is licensed under a <a rel="license noopener"
+          href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+          Commons Attribution-ShareAlike 4.0 International License</a>.
+      </p>
+    </div>
+  </footer>
 
-    <!-- Default Statcounter code for Congestion Pricing Analysis
+  <dialog class="lightbox" data-lightbox aria-label="Changes in traffic patterns for the congestion pricing, as obtained through computer vision-based analysis.">
+    <button class="lightbox__close" type="button" data-lightbox-close aria-label="Close">
+      <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg>
+    </button>
+    <img src="static/images/title.webp" width="1227" height="929" alt="" loading="lazy" decoding="async" data-lightbox-img>
+  </dialog>
+
+  <!-- Default Statcounter code for Congestion Pricing Analysis
 https://mkturkcan.github.io/congestionpricing/ -->
-    <script type="text/javascript">
-      var sc_project = 13085388;
-      var sc_invisible = 1;
-      var sc_security = "7d81e987"; 
-    </script>
-    <script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
-    <noscript>
-      <div class="statcounter"><a title="Web Analytics" href="https://statcounter.com/" target="_blank"><img
-            class="statcounter" src="https://c.statcounter.com/13085388/0/7d81e987/1/" alt="Web Analytics"
-            referrerPolicy="no-referrer-when-downgrade"></a></div>
-    </noscript>
-    <!-- End of Statcounter Code -->
-
-    <!-- End of Statcounter Code -->
-
+  <script type="text/javascript">
+    var sc_project = 13085388;
+    var sc_invisible = 1;
+    var sc_security = "7d81e987";
+  </script>
+  <script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
+  <noscript>
+    <div class="statcounter"><a title="Web Analytics" href="https://statcounter.com/" target="_blank"><img
+          class="statcounter" src="https://c.statcounter.com/13085388/0/7d81e987/1/" alt="Web Analytics"
+          referrerPolicy="no-referrer-when-downgrade"></a></div>
+  </noscript>
+  <!-- End of Statcounter Code -->
 </body>
 
 </html>

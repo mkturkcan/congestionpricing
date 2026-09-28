@@ -36,5 +36,14 @@ A z15 archive would exceed GitHub's 100 MB file limit.
 
 4. Check the result with `pmtiles verify ../../static/map/nyc.pmtiles`.
 
+## The hero's opening still
+
+`static/images/hero-start.webp` is a 2560×1440 capture of the landing-page map's
+first frame (night theme, water labels only, camera `[-73.975, 40.735]`, zoom 11.2,
+no pitch or padding). It is shown under the live canvas so the hero appears
+instantly and the cross-fade is seamless. Re-capture it if the style or that camera
+changes (render the style at 2560×1440 CSS pixels, device pixel ratio 1, without the
+attribution control).
+
 Map data © OpenStreetMap contributors (ODbL); the attribution control on every map
 links to the copyright page.

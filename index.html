@@ -28,12 +28,15 @@
   <meta name="twitter:image" content="https://mkturkcan.github.io/congestionpricing/static/images/og-card.jpg">
 
   <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
-  <link rel="preload" href="static/fonts/eb-garamond.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="static/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="modulepreload" href="static/vendor/maplibre/maplibre-gl.js">
-  <link rel="modulepreload" href="static/vendor/maplibre/maplibre-gl-shared.js">
+  <link rel="preload" href="static/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="static/fonts/ibm-plex-mono-medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="static/images/hero-start.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="modulepreload" href="static/vendor/maplibre/maplibre-gl.js" fetchpriority="low">
+  <link rel="modulepreload" href="static/vendor/maplibre/maplibre-gl-shared.js" fetchpriority="low">
   <link rel="stylesheet" href="static/css/tokens.css">
-  <link rel="stylesheet" href="static/vendor/maplibre/maplibre-gl.css">
+  <!-- Map control styles are only needed once the live map appears; keep them off the critical path. -->
+  <link rel="stylesheet" href="static/vendor/maplibre/maplibre-gl.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="static/vendor/maplibre/maplibre-gl.css"></noscript>
   <link rel="stylesheet" href="static/css/index.css">
   <script>
     // Content is hidden for scripted reveals only while the page script runs; if it
@@ -78,11 +81,21 @@
 
   <section class="hero" id="top" data-hero>
     <div class="hero__content">
-      <p class="hero__eyebrow" data-intro>Columbia University</p>
+      <a class="hero__stamp" href="https://arxiv.org/abs/2602.03015" target="_blank" rel="noopener" data-intro>arXiv:2602.03015 [cs.CV]</a>
+      <p class="hero__meta" data-intro><span class="hero__eyebrow">Columbia University</span></p>
       <h1 class="hero__title">
-        <span class="line"><span class="line__inner" data-intro>NYC Congestion Pricing:</span></span>
-        <span class="line line--italic"><span class="line__inner" data-intro>A <span class="nowrap">Vision-Based</span> Analysis</span></span>
+        <span class="line"><span class="line__text" data-scan>NYC Congestion</span></span>
+        <span class="line"><span class="line__text" data-scan>Pricing:</span></span>
+        <span class="hero__subtitle" data-intro>A Vision-Based Analysis</span>
       </h1>
+      <ul class="hero__byline" data-intro>
+        <li>Mehmet Kerem Turkcan</li>
+        <li>Jhonatan Tavori</li>
+        <li>Javad Ghaderi</li>
+        <li>Gil Zussman</li>
+        <li>Zoran Kostic</li>
+        <li>Andrew Smyth</li>
+      </ul>
       <div class="hero__actions" data-intro>
         <a class="btn btn--primary" href="https://arxiv.org/abs/2602.03015" target="_blank" rel="noopener">
           <svg class="icon" aria-hidden="true"><use href="#i-paper" /></svg><span>Paper</span>
@@ -95,16 +108,26 @@
           <span>Explore</span><svg class="icon" aria-hidden="true"><use href="#i-down" /></svg>
         </a>
       </div>
+      <figure class="hero__key" data-key>
+        <figcaption class="hero__key-title">Change in Peak Observed Car Count per Frame (%)</figcaption>
+        <div class="scale" aria-hidden="true">
+          <span class="scale__end">&lt; −30%</span>
+          <span class="scale__bar" data-hero-scale></span>
+          <span class="scale__end">&gt; +30%</span>
+        </div>
+        <dl class="hero__key-rows">
+          <div class="hero__key-row">
+            <dt><span class="mark mark--crz" aria-hidden="true"></span>CRZ (Congestion Relief Zone)</dt>
+            <dd data-key-value="crz">−15.8%</dd>
+          </div>
+          <div class="hero__key-row">
+            <dt><span class="mark" aria-hidden="true"></span>non-CRZ</dt>
+            <dd data-key-value="control">−10.9%</dd>
+          </div>
+        </dl>
+      </figure>
     </div>
 
-    <div class="hero__legend" data-intro aria-hidden="true">
-      <div class="scale">
-        <span class="scale__end">&lt; -30%</span>
-        <span class="scale__bar" data-hero-scale></span>
-        <span class="scale__end">&gt; +30%</span>
-      </div>
-      <div class="hero__legend-key"><span class="key-line"></span>CRZ (Congestion Relief Zone)</div>
-    </div>
     <div class="hero__cue" aria-hidden="true"><span></span></div>
 
     <!-- The map sits last in the DOM so its attribution follows the hero actions in tab order. -->
@@ -239,15 +262,15 @@
         <div class="split__body">
           <p class="limits__lead" data-reveal>Our approach has some important limitations:</p>
           <ol class="limits">
-            <li data-reveal><span class="limits__num" aria-hidden="true">i</span>
+            <li data-reveal><span class="limits__num" aria-hidden="true">(i)</span>
               <p>The computer vision system includes stationary vehicles in traffic density calculations, which may
                 affect measurements in areas with high street parking density</p>
             </li>
-            <li data-reveal><span class="limits__num" aria-hidden="true">ii</span>
+            <li data-reveal><span class="limits__num" aria-hidden="true">(ii)</span>
               <p>The current implementation analyzes aggregate traffic flow without distinguishing between individual
                 lanes or travel directions</p>
             </li>
-            <li data-reveal><span class="limits__num" aria-hidden="true">iii</span>
+            <li data-reveal><span class="limits__num" aria-hidden="true">(iii)</span>
               <p>Camera-based instantaneous vehicle counts serve as a proxy measure and may not directly correlate with
                 actual transit times or congestion levels</p>
             </li>

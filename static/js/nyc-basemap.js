@@ -87,11 +87,33 @@ export function countClass(count) {
  * GitHub Pages attach a short max-age to 206 responses, and some browsers then
  * answer later range requests from the wrong cached fragment. Tiles still stay
  * cached in memory by MapLibre for the session.
+ *
+ * Requests made without an abort signal are warm-ups (see warmTiles); their
+ * responses are held briefly so MapLibre's own request for the same bytes
+ * reuses them instead of fetching twice.
  */
 class RangeSource {
-  constructor(url) { this.url = url; }
+  constructor(url) {
+    this.url = url;
+    this.early = new Map();
+  }
   getKey() { return this.url; }
-  async getBytes(offset, length, signal, etag) {
+  getBytes(offset, length, signal, etag) {
+    const key = `${offset}:${length}`;
+    const early = this.early.get(key);
+    if (early) {
+      this.early.delete(key);
+      return early;
+    }
+    const request = this.fetchRange(offset, length, signal, etag);
+    if (!signal) {
+      this.early.set(key, request);
+      request.catch(() => this.early.delete(key));
+      setTimeout(() => this.early.delete(key), 20000);
+    }
+    return request;
+  }
+  async fetchRange(offset, length, signal, etag) {
     const resp = await fetch(this.url, {
       signal, cache: 'no-store', headers: { range: `bytes=${offset}-${offset + length - 1}` },
     });
@@ -107,13 +129,42 @@ class RangeSource {
   }
 }
 
+let archive = null;
+function sharedArchive() {
+  archive ??= new window.pmtiles.PMTiles(new RangeSource(TILES_URL));
+  return archive;
+}
+
 let protocolRegistered = false;
 export function registerProtocol(maplibregl) {
   if (protocolRegistered) return;
   const protocol = new window.pmtiles.Protocol({ metadata: true });
-  protocol.add(new window.pmtiles.PMTiles(new RangeSource(TILES_URL)));
+  protocol.add(sharedArchive());
   maplibregl.addProtocol('pmtiles', protocol.tile);
   protocolRegistered = true;
+}
+
+/**
+ * Start fetching the archive index and the tiles a camera will show, before
+ * MapLibre itself has loaded. `camera` is { center: [lon, lat], zoom } without padding.
+ */
+export function warmTiles(camera, width, height) {
+  if (!window.pmtiles) return;
+  const pm = sharedArchive();
+  pm.getHeader().catch(() => {});
+  if (!camera) return;
+  const z = Math.max(0, Math.min(14, Math.floor(camera.zoom)));
+  const span = 512 * 2 ** (camera.zoom - z); // on-screen size of one tile at this zoom
+  const world = 512 * 2 ** camera.zoom;
+  const [lon, lat] = camera.center;
+  const px = ((lon + 180) / 360) * world;
+  const rad = (lat * Math.PI) / 180;
+  const py = ((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2) * world;
+  for (let x = Math.floor((px - width / 2) / span); x <= Math.floor((px + width / 2) / span); x++) {
+    for (let y = Math.floor((py - height / 2) / span); y <= Math.floor((py + height / 2) / span); y++) {
+      pm.getZxy(z, x, y).catch(() => {});
+    }
+  }
 }
 
 /*
@@ -219,7 +270,7 @@ function roadLayers(t, isDay, group, groupFilter) {
 /**
  * @param {object} options
  * @param {'night'|'day'} [options.theme]
- * @param {'full'|'minimal'|'none'} [options.labels] minimal keeps water and borough names only
+ * @param {'full'|'minimal'|'water'|'none'} [options.labels] minimal keeps water and borough names; water keeps water names only
  * @param {boolean|{from:number,to:number}} [options.buildings3d] extrude building heights, rising between two zooms
  */
 export function buildStyle({ theme = 'night', labels = 'full', buildings3d = false } = {}) {
@@ -393,7 +444,7 @@ export function buildStyle({ theme = 'night', labels = 'full', buildings3d = fal
       },
       paint: { 'text-color': t.labelWater, ...waterHalo },
     });
-    label.push({
+    if (labels !== 'water') label.push({
       id: 'label-borough', type: 'symbol', source: 'places', maxzoom: 15,
       layout: {
         'text-field': ['get', 'name'], 'text-font': FONT.serif, 'text-transform': 'uppercase',

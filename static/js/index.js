@@ -1,4 +1,4 @@
-import { buildStyle, registerProtocol, keepLabelsUpright, DATA_BEFORE, DIVERGING, pctClass, rawClass } from './nyc-basemap.js';
+import { buildStyle, registerProtocol, warmTiles, keepLabelsUpright, DATA_BEFORE, DIVERGING, pctClass, rawClass } from './nyc-basemap.js';
 
 // Signals the inline boot check in index.html that scripted reveals are live.
 window.__cpBoot = true;
@@ -75,6 +75,31 @@ fontsReady.then(() => requestAnimationFrame(() => hero.classList.add('is-intro')
   }
 })();
 
+/* ——— Hero figure key: headline results arrive as the zone finishes drawing ——— */
+
+let resultsShown = false;
+function showResults() {
+  if (resultsShown) return;
+  resultsShown = true;
+  hero.classList.add('has-results');
+  dataPromise.then((data) => {
+    const s = data.stats.all;
+    for (const [key, to] of [['crz', s.crz_median_pct], ['control', s.non_crz_median_pct]]) {
+      const el = document.querySelector(`[data-key-value="${key}"]`);
+      if (reduceMotion) { el.textContent = fmtSigned(to) + '%'; continue; }
+      const t0 = performance.now();
+      const step = (now) => {
+        const p = easeOutCubic(clamp01((now - t0) / 1100));
+        el.textContent = fmtSigned(to * p) + '%';
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+  });
+}
+// Never hold the results back for long, whatever the map is doing.
+setTimeout(showResults, reduceMotion ? 0 : 5200);
+
 /* ——— Hero map ——— */
 
 function webglAvailable() {
@@ -101,17 +126,21 @@ async function initHeroMap() {
   const container = document.querySelector('[data-hero-map]');
   if (!webglAvailable()) {
     container.classList.add('is-fallback');
+    setTimeout(showResults, 1200);
     return;
   }
+  const end = heroCamera();
+  // The opening camera matches the still under the canvas (static/images/hero-start.webp): no padding.
+  const start = reduceMotion ? end : { center: [-73.975, 40.735], zoom: 11.2, pitch: 0, bearing: 0 };
+  // Fetch the archive index and the opening frame's tiles while the map library downloads.
+  warmTiles(reduceMotion ? null : start, innerWidth, hero.offsetHeight);
   // Loaded on demand so the page never depends on the map bundle to render.
   const maplibregl = await import('../vendor/maplibre/maplibre-gl.js');
   registerProtocol(maplibregl);
-  const end = heroCamera();
-  const start = reduceMotion ? end : { center: [-73.975, 40.735], zoom: 11.2, pitch: 0, bearing: 0, padding: end.padding };
 
   const map = new maplibregl.Map({
     container,
-    style: buildStyle({ theme: 'night', labels: 'minimal', buildings3d: { from: 11.6, to: 12.7 } }),
+    style: buildStyle({ theme: 'night', labels: 'water', buildings3d: { from: 11.6, to: 12.7 } }),
     ...start,
     interactive: false,
     attributionControl: { compact: true },
@@ -143,7 +172,6 @@ async function initHeroMap() {
   // Stagger: the bloom radiates outward from the zone.
   const delay = dist.map((d, i) => 0.15 + (d / maxDist) ** 0.8 * 1.9 + (i % 7) * 0.018);
 
-  if (map.getLayer('label-borough')) map.setLayoutProperty('label-borough', 'visibility', 'none');
   const before = map.getLayer(DATA_BEFORE) ? DATA_BEFORE : undefined;
   map.addSource('crz-area', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [ring] } } });
   map.addSource('crz-edge', { type: 'geojson', lineMetrics: true, data: { type: 'Feature', geometry: { type: 'LineString', coordinates: ring } } });
@@ -198,7 +226,7 @@ async function initHeroMap() {
     placeNote();
   });
 
-  await new Promise((resolve) => map.once('idle', resolve));
+  // The basemap has rendered its first complete frame: cross-fade from the still and begin.
   container.classList.add('is-ready');
 
   const setAllGrown = () => { for (const f of features) map.setFeatureState({ source: 'cams', id: f.id }, { g: 1 }); };
@@ -208,6 +236,7 @@ async function initHeroMap() {
     map.setPaintProperty('crz-glow', 'line-opacity', 0.28);
     placeNote();
     note.classList.add('is-visible');
+    showResults();
     return;
   }
 
@@ -216,7 +245,7 @@ async function initHeroMap() {
   else map.jumpTo(end);
 
   const t0 = performance.now();
-  const edgeStart = 0.9, edgeDur = 2.6, bloomStart = 1.6;
+  const edgeStart = 0.6, edgeDur = 2.4, bloomStart = 1.1;
   const growing = new Set(features.map((f) => f.id));
   const drift = innerWidth >= 760; // phones hold still once the intro settles
   let driftBase = null;
@@ -249,7 +278,7 @@ async function initHeroMap() {
       if (t > edgeStart + edgeDur) {
         map.setPaintProperty('crz-fill', 'fill-opacity', 0.055);
         map.setPaintProperty('crz-glow', 'line-opacity', 0.28);
-        if (!note.classList.contains('is-visible')) { placeNote(); note.classList.add('is-visible'); }
+        if (!note.classList.contains('is-visible')) { placeNote(); note.classList.add('is-visible'); showResults(); }
       }
       if (!growing.size && t > edgeStart + edgeDur && t > 6) {
         introDone = true;
@@ -293,6 +322,7 @@ function edgeGradient(p) {
 initHeroMap().catch((err) => {
   console.error(err);
   document.querySelector('[data-hero-map]').classList.add('is-fallback');
+  setTimeout(showResults, 1200);
 });
 
 /* ——— Results: distribution of per-camera change ——— */

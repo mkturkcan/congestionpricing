@@ -10,16 +10,10 @@
 .info--live .panel__about { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); display: flex; }
 
 .live-dot { position: relative; width: 9px; height: 9px; flex: none; border-radius: 50%; background: #fab219; }
-.live-dot::after {
-  content: ''; position: absolute; inset: -5px; border-radius: 50%;
-  border: 1.5px solid currentColor; color: inherit; opacity: 0;
-}
-.live-dot[data-status='connected'] { background: #0ca30c; color: #0ca30c; }
-.live-dot[data-status='connected']::after { animation: live-ring 2.2s var(--ease-out) infinite; }
+.live-dot[data-status='connected'] { background: #0ca30c; }
 .live-dot[data-status='connecting'] { background: #fab219; animation: live-blink 1.2s var(--ease-in-out) infinite; }
 .live-dot[data-status='offline'] { background: #d03b3b; }
 .live-stat__value.is-fresh { animation: fresh 900ms var(--ease-out); }
-@keyframes live-ring { 0% { transform: scale(0.4); opacity: 0.8; } 100% { transform: scale(1.4); opacity: 0; } }
 @keyframes live-blink { 50% { opacity: 0.35; } }
 @keyframes fresh { 0% { color: var(--accent); } 100% { color: var(--text); } }
 

@@ -81,8 +81,6 @@
 
   <section class="hero" id="top" data-hero>
     <div class="hero__content">
-      <a class="hero__stamp" href="https://arxiv.org/abs/2602.03015" target="_blank" rel="noopener" data-intro>arXiv:2602.03015 [cs.CV]</a>
-      <p class="hero__meta" data-intro><span class="hero__eyebrow">Columbia University</span></p>
       <h1 class="hero__title">
         <span class="line"><span class="line__text" data-scan>NYC Congestion</span></span>
         <span class="line"><span class="line__text" data-scan>Pricing:</span></span>
@@ -96,6 +94,8 @@
         <li>Zoran Kostic</li>
         <li>Andrew Smyth</li>
       </ul>
+      <p class="hero__affiliation" data-intro>Columbia University</p>
+      <a class="hero__stamp" href="https://arxiv.org/abs/2602.03015" target="_blank" rel="noopener" data-intro>arXiv:2602.03015 [cs.CV]</a>
       <div class="hero__actions" data-intro>
         <a class="btn btn--primary" href="https://arxiv.org/abs/2602.03015" target="_blank" rel="noopener">
           <svg class="icon" aria-hidden="true"><use href="#i-paper" /></svg><span>Paper</span>
@@ -128,7 +128,6 @@
       </figure>
     </div>
 
-    <div class="hero__cue" aria-hidden="true"><span></span></div>
 
     <!-- The map sits last in the DOM so its attribution follows the hero actions in tab order. -->
     <div class="hero__map" data-hero-map></div>
@@ -149,7 +148,7 @@
             </picture>
             <span class="teaser__zoom" aria-hidden="true"><svg class="icon"><use href="#i-zoom" /></svg></span>
           </button>
-          <figcaption class="teaser__caption lede" data-reveal>
+          <figcaption class="teaser__caption lede">
             Using a computer vision framework applied to a network of 910 NYC traffic cameras, we analyze traffic
             patterns using year-to-year data from November 14 to January 4 (before and after) to look at the effects
             of the pricing. The visualization above depicts relative traffic volume changes at key intersections
@@ -162,50 +161,43 @@
 
     <section class="results" aria-labelledby="results-title" data-results>
       <div class="wrap">
-        <div class="results__head" data-reveal>
+        <div class="results__head">
           <h2 class="results__title" id="results-title" data-chart-title>Change in Peak Observed Car Count per Frame
             (%)</h2>
           <div class="results__controls">
-            <div class="segmented" role="radiogroup" aria-label="Metric" data-control="metric">
-              <span class="segmented__label" aria-hidden="true">Metric</span>
-              <button type="button" role="radio" aria-checked="true" data-value="pct">Percentage Change (%)</button>
-              <button type="button" role="radio" aria-checked="false" data-value="raw">Absolute Change
-                (Count)</button>
+            <div class="control">
+              <span class="control__label" id="metric-label">Metric</span>
+              <div class="segmented" role="radiogroup" aria-labelledby="metric-label" data-control="metric">
+                <button type="button" role="radio" aria-checked="true" data-value="pct">Percentage Change (%)</button>
+                <button type="button" role="radio" aria-checked="false" data-value="raw">Absolute Change
+                  (Count)</button>
+              </div>
             </div>
-            <div class="segmented" role="radiogroup" aria-label="Day Type" data-control="day">
-              <span class="segmented__label" aria-hidden="true">Day Type</span>
-              <button type="button" role="radio" aria-checked="true" data-value="all">All Week</button>
-              <button type="button" role="radio" aria-checked="false" data-value="weekday">Weekdays</button>
-              <button type="button" role="radio" aria-checked="false" data-value="weekend">Weekends</button>
+            <div class="control">
+              <span class="control__label" id="day-label">Day Type</span>
+              <div class="segmented" role="radiogroup" aria-labelledby="day-label" data-control="day">
+                <button type="button" role="radio" aria-checked="true" data-value="all">All Week</button>
+                <button type="button" role="radio" aria-checked="false" data-value="weekday">Weekdays</button>
+                <button type="button" role="radio" aria-checked="false" data-value="weekend">Weekends</button>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="results__body">
-          <div class="results__stats" data-reveal>
-            <div class="stat stat--crz">
-              <span class="stat__label">CRZ (Congestion Relief Zone)</span>
-              <span class="stat__value" data-stat="crz">&nbsp;</span>
-            </div>
-            <div class="stat">
-              <span class="stat__label">non-CRZ</span>
-              <span class="stat__value" data-stat="control">&nbsp;</span>
-            </div>
-            <p class="results__n" data-sample-size>&nbsp;</p>
-          </div>
-          <div class="swarm" data-swarm data-reveal>
+          <div class="swarm" data-swarm>
             <div class="swarm__tooltip" data-swarm-tip hidden></div>
           </div>
+          <p class="results__n" data-sample-size>&nbsp;</p>
         </div>
       </div>
     </section>
 
     <section class="launch" id="interactive-viz" aria-labelledby="launch-title">
       <div class="wrap">
-        <h2 class="section-title" id="launch-title" data-reveal>Launch Interactive Visualization</h2>
+        <h2 class="section-title" id="launch-title">Launch Interactive Visualization</h2>
         <div class="launch__grid">
-          <a class="launch-card launch-card--primary" href="interactive/index.html" target="_blank" rel="noopener"
-            data-reveal>
+          <a class="launch-card launch-card--primary" href="interactive/index.html" target="_blank" rel="noopener" data-reveal>
             <span class="launch-card__media">
               <picture>
                 <source srcset="static/images/preview-interactive.webp" type="image/webp">
@@ -216,7 +208,6 @@
             <span class="launch-card__label">
               <svg class="icon" aria-hidden="true"><use href="#i-map" /></svg>
               <span>Interactive Map</span>
-              <svg class="icon launch-card__arrow" aria-hidden="true"><use href="#i-external" /></svg>
             </span>
           </a>
           <a class="launch-card" href="interactive/stream.html" target="_blank" rel="noopener" data-reveal>
@@ -226,24 +217,22 @@
                 <img src="static/images/preview-stream.jpg" width="1600" height="1000" alt="" loading="lazy"
                   decoding="async">
               </picture>
-              <span class="live-dot" aria-hidden="true"></span>
             </span>
             <span class="launch-card__label">
               <svg class="icon" aria-hidden="true"><use href="#i-live" /></svg>
               <span>Real Time Map</span>
-              <svg class="icon launch-card__arrow" aria-hidden="true"><use href="#i-external" /></svg>
             </span>
           </a>
         </div>
-        <p class="launch__help" data-reveal>Click on the button to open the interactive visualization in a new tab.</p>
+        <p class="launch__help">Click on the button to open the interactive visualization in a new tab.</p>
       </div>
     </section>
 
     <section class="prose-section" aria-labelledby="abstract-title">
       <div class="wrap split">
-        <h2 class="rail-title" id="abstract-title" data-reveal>Abstract</h2>
+        <h2 class="rail-title" id="abstract-title">Abstract</h2>
         <div class="split__body">
-          <p class="lede lede--abstract" data-reveal>
+          <p class="lede lede--abstract">
             We examine the impact of New York City’s congestion pricing program through automated analysis of traffic
             camera data. Our computer vision pipeline processes footage from over 900 cameras distributed throughout
             Manhattan, comparing traffic patterns using year-to-year data from November 14 to January 4. By excluding
@@ -258,21 +247,18 @@
 
     <section class="prose-section prose-section--limits" aria-labelledby="limits-title">
       <div class="wrap split">
-        <h2 class="rail-title" id="limits-title" data-reveal>Current Limitations</h2>
+        <h2 class="rail-title" id="limits-title">Current Limitations</h2>
         <div class="split__body">
-          <p class="limits__lead" data-reveal>Our approach has some important limitations:</p>
+          <p class="limits__lead">Our approach has some important limitations:</p>
           <ol class="limits">
-            <li data-reveal><span class="limits__num" aria-hidden="true">(i)</span>
-              <p>The computer vision system includes stationary vehicles in traffic density calculations, which may
-                affect measurements in areas with high street parking density</p>
+            <li><span class="limits__num" aria-hidden="true">(i)</span>
+              <p>The computer vision system includes stationary vehicles in traffic density calculations, which may affect measurements in areas with high street parking density</p>
             </li>
-            <li data-reveal><span class="limits__num" aria-hidden="true">(ii)</span>
-              <p>The current implementation analyzes aggregate traffic flow without distinguishing between individual
-                lanes or travel directions</p>
+            <li><span class="limits__num" aria-hidden="true">(ii)</span>
+              <p>The current implementation analyzes aggregate traffic flow without distinguishing between individual lanes or travel directions</p>
             </li>
-            <li data-reveal><span class="limits__num" aria-hidden="true">(iii)</span>
-              <p>Camera-based instantaneous vehicle counts serve as a proxy measure and may not directly correlate with
-                actual transit times or congestion levels</p>
+            <li><span class="limits__num" aria-hidden="true">(iii)</span>
+              <p>Camera-based instantaneous vehicle counts serve as a proxy measure and may not directly correlate with actual transit times or congestion levels</p>
             </li>
           </ol>
         </div>
@@ -281,32 +267,32 @@
 
     <section class="team" aria-labelledby="team-title">
       <div class="wrap split">
-        <h2 class="rail-title" id="team-title" data-reveal>Research Team</h2>
+        <h2 class="rail-title" id="team-title">Research Team</h2>
         <div class="split__body">
           <ul class="team__list">
-            <li data-reveal><a href="https://keremturkcan.com" target="_blank" rel="noopener">Mehmet Kerem Turkcan</a>
+            <li><a href="https://keremturkcan.com" target="_blank" rel="noopener">Mehmet Kerem Turkcan</a>
             </li>
-            <li data-reveal><a href="https://www.cs.tau.ac.il/~jhonatant/" target="_blank" rel="noopener">Jhonatan
+            <li><a href="https://www.cs.tau.ac.il/~jhonatant/" target="_blank" rel="noopener">Jhonatan
                 Tavori</a></li>
-            <li data-reveal><a href="https://www.ee.columbia.edu/~jghaderi/" target="_blank" rel="noopener">Javad
+            <li><a href="https://www.ee.columbia.edu/~jghaderi/" target="_blank" rel="noopener">Javad
                 Ghaderi</a></li>
-            <li data-reveal><a href="https://wimnet.ee.columbia.edu/people/gil-zussman/" target="_blank"
+            <li><a href="https://wimnet.ee.columbia.edu/people/gil-zussman/" target="_blank"
                 rel="noopener">Gil Zussman</a></li>
-            <li data-reveal><a href="https://www.aidl.ee.columbia.edu/" target="_blank" rel="noopener">Zoran
+            <li><a href="https://www.aidl.ee.columbia.edu/" target="_blank" rel="noopener">Zoran
                 Kostic</a></li>
-            <li data-reveal><a href="https://www.columbia.edu/cu/civileng/smyth/index.html" target="_blank"
+            <li><a href="https://www.columbia.edu/cu/civileng/smyth/index.html" target="_blank"
                 rel="noopener">Andrew Smyth</a></li>
           </ul>
-          <p class="team__affiliation" data-reveal>Columbia University</p>
+          <p class="team__affiliation">Columbia University</p>
         </div>
       </div>
       <div class="wrap">
-        <div class="split ack" data-reveal>
+        <div class="split ack">
           <h3 class="rail-title rail-title--minor">Acknowledgement</h3>
           <p class="ack__text">This project was partly supported by compute resources at the PAWR COSMOS testbed at Columbia
             University.</p>
         </div>
-        <ul class="partners" data-reveal>
+        <ul class="partners">
           <li><a href="https://www.columbia.edu" target="_blank" rel="noopener noreferrer"><img
                 src="static/images/CU.png" width="1252" height="187" alt="Columbia University" loading="lazy"></a>
           </li>
@@ -324,46 +310,46 @@
 
     <section class="links-section" aria-labelledby="links-title">
       <div class="wrap split">
-        <h2 class="rail-title" id="links-title" data-reveal>Related Links</h2>
+        <h2 class="rail-title" id="links-title">Related Links</h2>
         <ul class="link-index split__body">
-          <li data-reveal><a href="https://www.nytimes.com/interactive/2026/01/05/upshot/congestion-pricing-one-year.html"
+          <li><a href="https://www.nytimes.com/interactive/2026/01/05/upshot/congestion-pricing-one-year.html"
               target="_blank" rel="noopener"><span class="link-index__title">27 Million Fewer Car Trips: Life After a
                 Year of Congestion Pricing</span><span class="link-index__source">NY Times</span></a></li>
-          <li data-reveal><a href="https://www.mta.info/document/195631" target="_blank" rel="noopener"><span
+          <li><a href="https://www.mta.info/document/195631" target="_blank" rel="noopener"><span
                 class="link-index__title">Congestion Relief Zone Tolling First Evaluation Report</span><span
                 class="link-index__source">MTA</span></a></li>
-          <li data-reveal><a href="https://www.nber.org/papers/w33584" target="_blank" rel="noopener"><span
+          <li><a href="https://www.nber.org/papers/w33584" target="_blank" rel="noopener"><span
                 class="link-index__title">The Short-Run Effects of Congestion Pricing in New York City</span><span
                 class="link-index__source">NBER</span></a></li>
-          <li data-reveal><a href="https://sps.columbia.edu/news/success-and-challenges-congestion-pricing-new-york-city"
+          <li><a href="https://sps.columbia.edu/news/success-and-challenges-congestion-pricing-new-york-city"
               target="_blank" rel="noopener"><span class="link-index__title">The Success and Challenges of Congestion
                 Pricing in New York City</span><span class="link-index__source">Columbia</span></a></li>
-          <li data-reveal><a href="https://www.nature.com/articles/s44407-025-00037-2" target="_blank"
+          <li><a href="https://www.nature.com/articles/s44407-025-00037-2" target="_blank"
               rel="noopener"><span class="link-index__title">A first look into congestion pricing in the United
                 States: PM 2.5 impacts</span><span class="link-index__source">Nature</span></a></li>
-          <li data-reveal><a href="https://news.cornell.edu/stories/2025/12/congestion-pricing-improved-air-quality-nyc-and-suburbs"
+          <li><a href="https://news.cornell.edu/stories/2025/12/congestion-pricing-improved-air-quality-nyc-and-suburbs"
               target="_blank" rel="noopener"><span class="link-index__title">Congestion pricing improved air quality
                 in NYC and suburbs</span><span class="link-index__source">Cornell</span></a></li>
-          <li data-reveal><a href="https://metrics.mta.info/?cbdtp/vehiclereductions" target="_blank"
+          <li><a href="https://metrics.mta.info/?cbdtp/vehiclereductions" target="_blank"
               rel="noopener"><span class="link-index__title">MTA Vehicle Reductions Dashboard</span></a></li>
-          <li data-reveal><a
+          <li><a
               href="https://data.ny.gov/Transportation/MTA-Congestion-Relief-Zone-Vehicle-Entries-Beginni/t6yz-b64h/about_data"
               target="_blank" rel="noopener"><span class="link-index__title">MTA Congestion Relief Zone Vehicle
                 Entries Data</span><span class="link-index__source">NY State</span></a></li>
-          <li data-reveal><a href="https://www.mta.info/article/most-detailed-view-of-nyc-traffic-so-far"
+          <li><a href="https://www.mta.info/article/most-detailed-view-of-nyc-traffic-so-far"
               target="_blank" rel="noopener"><span class="link-index__title">The most detailed view of NYC traffic (so
                 far)</span><span class="link-index__source">MTA</span></a></li>
-          <li data-reveal><a
+          <li><a
               href="https://inrix.com/blog/2025-kicks-off-right-cordon-based-congestion-pricing-implemented-in-new-york-city/"
               target="_blank" rel="noopener"><span class="link-index__title">2025 Kicks Off Right: Cordon-Based
                 Congestion Pricing Implemented in New York City</span><span
                 class="link-index__source">INRIX</span></a></li>
-          <li data-reveal><a
+          <li><a
               href="https://www.msn.com/en-us/urban-infrastructure/transportation-infrastructure/new-york-says-1-million-fewer-vehicles-have-entered-manhattan-since-congestion-pricing-start/ar-AA1y5eBF"
               target="_blank" rel="noopener"><span class="link-index__title">New York says 1 million fewer vehicles
                 have entered Manhattan since congestion pricing start</span><span
                 class="link-index__source">MSN</span></a></li>
-          <li data-reveal><a href="https://www.congestion-pricing-tracker.com/" target="_blank" rel="noopener"><span
+          <li><a href="https://www.congestion-pricing-tracker.com/" target="_blank" rel="noopener"><span
                 class="link-index__title">Congestion Pricing Tracker</span></a></li>
         </ul>
       </div>
@@ -371,11 +357,11 @@
 
     <section class="refs" id="BibTeX" aria-labelledby="refs-title">
       <div class="wrap split">
-        <h2 class="rail-title" id="refs-title" data-reveal>References</h2>
+        <h2 class="rail-title" id="refs-title">References</h2>
         <div class="split__body">
-          <p class="refs__intro" data-reveal>If you use this dataset or code in your research, please kindly cite the
+          <p class="refs__intro">If you use this dataset or code in your research, please kindly cite the
             following works:</p>
-          <div class="bib" data-reveal>
+          <div class="bib">
             <button class="bib__copy" type="button" data-copy aria-label="Copy">
               <svg class="icon icon--copy" aria-hidden="true"><use href="#i-copy" /></svg>
               <svg class="icon icon--check" aria-hidden="true"><use href="#i-check" /></svg>
@@ -389,7 +375,7 @@
   publisher = {Hugging Face}
 }</code></pre>
           </div>
-          <div class="bib" data-reveal>
+          <div class="bib">
             <button class="bib__copy" type="button" data-copy aria-label="Copy">
               <svg class="icon icon--copy" aria-hidden="true"><use href="#i-copy" /></svg>
               <svg class="icon icon--check" aria-hidden="true"><use href="#i-check" /></svg>
@@ -408,7 +394,7 @@
   series = {SEC '25}
 }</code></pre>
           </div>
-          <div class="bib" data-reveal>
+          <div class="bib">
             <button class="bib__copy" type="button" data-copy aria-label="Copy">
               <svg class="icon icon--copy" aria-hidden="true"><use href="#i-copy" /></svg>
               <svg class="icon icon--check" aria-hidden="true"><use href="#i-check" /></svg>

@@ -340,7 +340,6 @@ async function initResults() {
   const host = root.querySelector('[data-swarm]');
   const tip = root.querySelector('[data-swarm-tip]');
   const titleEl = root.querySelector('[data-chart-title]');
-  const statEls = { crz: root.querySelector('[data-stat="crz"]'), control: root.querySelector('[data-stat="control"]') };
   const nEl = root.querySelector('[data-sample-size]');
   const DAY_INDEX = { all: 'all', weekday: 'weekday', weekend: 'weekend' };
   const palette = DIVERGING.night;
@@ -459,7 +458,7 @@ async function initResults() {
       const x = layout.xs(v);
       const top = row.center - row.extent;
       const line = svgEl('line', { class: 'median', x1: x, x2: x, y1: top - 16, y2: row.center + row.extent - 2 });
-      const label = svgEl('text', { class: 'median-label', x: x + 7, y: top - 6 });
+      const label = svgEl('text', { class: row.isCrz ? 'median-label median-label--crz' : 'median-label', x: x + 7, y: top - 6 });
       label.textContent = fmtSigned(v) + (key === 'pct' ? '%' : '');
       gMedians.append(line, label);
       if (animate && !reduceMotion) {
@@ -471,7 +470,7 @@ async function initResults() {
     }
   }
 
-  function updateText(animate) {
+  function updateText() {
     const s = data.stats[state.day];
     const isPct = state.metric === 'pct';
     titleEl.textContent = isPct ? 'Change in Peak Observed Car Count per Frame (%)' : 'Change in Peak Observed Car Count per Frame (Count)';
@@ -479,20 +478,6 @@ async function initResults() {
       crz: isPct ? s.crz_median_pct : s.crz_median_raw,
       control: isPct ? s.non_crz_median_pct : s.non_crz_median_raw,
     };
-    for (const [k, el] of Object.entries(statEls)) {
-      const to = targets[k];
-      const from = el._shown ?? to;
-      const render = (v) => { el._shown = v; el.textContent = fmtSigned(v) + (isPct ? '%' : ''); };
-      cancelAnimationFrame(el._raf);
-      if (!animate || reduceMotion || from === to) { render(to); continue; }
-      const t0 = performance.now();
-      const step = (now) => {
-        const p = easeOutCubic(clamp01((now - t0) / 900));
-        render(from + (to - from) * p);
-        if (p < 1) el._raf = requestAnimationFrame(step);
-      };
-      el._raf = requestAnimationFrame(step);
-    }
     nEl.textContent = s.crz_n + ' CRZ cameras • ' + s.non_crz_n + ' non-CRZ cameras';
     svg.setAttribute('aria-label', `${titleEl.textContent}. CRZ (Congestion Relief Zone): ${fmtSigned(targets.crz)}${isPct ? '%' : ''}. non-CRZ: ${fmtSigned(targets.control)}${isPct ? '%' : ''}. ${nEl.textContent}.`);
   }
@@ -545,7 +530,7 @@ async function initResults() {
     computeLayout();
     drawFrame();
     drawMedians(mode !== 'jump');
-    updateText(mode !== 'jump');
+    updateText();
     transition(mode);
   }
 
@@ -565,7 +550,7 @@ async function initResults() {
       } else {
         computeLayout();
         drawFrame();
-        updateText(true);
+        updateText();
       }
     };
     buttons.forEach((b) => { b.tabIndex = b.getAttribute('aria-checked') === 'true' ? 0 : -1; });
@@ -656,18 +641,7 @@ async function initResults() {
   // Frame and numbers are ready immediately; the dots fall in when the chart is seen.
   computeLayout();
   drawFrame();
-  updateText(false);
-  const statsBlock = root.querySelector('.results__stats');
-  if (!reduceMotion && 'IntersectionObserver' in window && !statsBlock.classList.contains('is-in')) {
-    // The block is still hidden (it fades in on reveal), so counting up from zero causes no visible jump.
-    const countIO = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
-      countIO.disconnect();
-      for (const el of Object.values(statEls)) el._shown = 0;
-      updateText(true);
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-    countIO.observe(statsBlock);
-  }
+  updateText();
   const io = new IntersectionObserver(([e]) => {
     if (!e.isIntersecting) return;
     io.disconnect();

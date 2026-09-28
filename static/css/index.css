@@ -515,9 +515,18 @@ h1, h2, h3, p, ol, ul, figure { margin: 0; }
   font-variant-caps: all-small-caps; letter-spacing: 0.12em; color: var(--ink-3);
 }
 
-.partners {
-  list-style: none; padding: 44px 0 0; margin-top: clamp(64px, 8vw, 112px);
+.ack {
+  margin-top: clamp(64px, 8vw, 112px); padding-top: 26px;
   border-top: 1px solid var(--rule);
+}
+.rail-title--minor { font-size: 1.125rem; color: var(--ink-3); }
+.ack__text {
+  max-width: 40em;
+  font-family: var(--font-serif); font-size: clamp(1.1rem, 1.02rem + 0.3vw, 1.25rem); line-height: 1.5;
+  color: var(--ink-2); text-wrap: pretty;
+}
+.partners {
+  list-style: none; padding: 0; margin-top: clamp(40px, 5vw, 64px);
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 36px 48px;
 }
 .partners a { display: block; }

@@ -6,7 +6,7 @@ they need is served from this repository:
 | Path | What it is |
 | --- | --- |
 | `static/map/nyc.pmtiles` | Vector tiles for the five boroughs and surroundings (zoom 0–14, OpenStreetMap data via [Protomaps](https://protomaps.com)), read with HTTP range requests |
-| `static/map/fonts/*.woff2` | Label fonts (Figtree, EB Garamond) rendered by MapLibre's `font-faces` |
+| `static/map/fonts/*.woff2` | Label fonts (IBM Plex Sans, EB Garamond) rendered by MapLibre's `font-faces` |
 | `static/map/fonts/<stack>/*.pbf` | Fallback glyphs (Noto Sans) for any character the label fonts lack |
 | `static/js/nyc-basemap.js` | Style builder: night and day themes, 3D buildings, labels, data palettes |
 | `static/vendor/` | MapLibre GL JS 6.11.2, PMTiles 4.5.0, MQTT.js 5.16.0 |

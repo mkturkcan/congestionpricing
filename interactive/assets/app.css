@@ -16,7 +16,7 @@
   --accent: #b9d9eb;
   --accent-ink: #0b1a2c;
   --crz: #b9d9eb;
-  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 18px 44px -18px rgba(0, 0, 0, 0.7), 0 2px 8px -2px rgba(0, 0, 0, 0.35);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 6px 16px -8px rgba(0, 0, 0, 0.5);
   --map-bg: #030e1a;
   --tip-bg: #f7f5f0;
   --tip-text: #111b29;
@@ -36,7 +36,7 @@
   --accent: #1d4f91;
   --accent-ink: #ffffff;
   --crz: #1d4f91;
-  --shadow: 0 18px 40px -20px rgba(20, 36, 58, 0.38), 0 2px 8px -3px rgba(20, 36, 58, 0.16);
+  --shadow: 0 1px 2px rgba(20, 36, 58, 0.12), 0 6px 16px -8px rgba(20, 36, 58, 0.22);
   --map-bg: #b9d9eb;
   --tip-bg: #111b29;
   --tip-text: #eef1f4;
@@ -91,19 +91,11 @@ a { color: inherit; }
   box-shadow: var(--shadow);
   transition: background-color var(--dur-complex) var(--ease-out), border-color var(--dur-complex) var(--ease-out),
     color var(--dur-complex) var(--ease-out), box-shadow var(--dur-complex) var(--ease-out),
-    opacity 700ms var(--ease-out), transform 900ms var(--ease-out);
+    opacity 500ms var(--ease-out);
 }
-.js-intro .panel { opacity: 0; transform: translate3d(0, 10px, 0); }
-.js-intro.is-ready .panel { opacity: 1; transform: none; }
-.js-intro.is-ready .panel:nth-of-type(2) { transition-delay: 90ms; }
-.js-intro.is-ready .panel:nth-of-type(3) { transition-delay: 180ms; }
-.js-intro.is-ready .panel:nth-of-type(4) { transition-delay: 270ms; }
+.js-intro .panel { opacity: 0; }
+.js-intro.is-ready .panel { opacity: 1; }
 
-.panel__eyebrow {
-  margin: 0 0 6px;
-  font-family: var(--font-serif); font-size: 0.95rem; font-weight: 500;
-  font-variant-caps: all-small-caps; letter-spacing: 0.12em; color: var(--text-3);
-}
 .panel__title {
   margin: 0;
   font-family: var(--font-sans); font-weight: 600; font-size: 1.0625rem; line-height: 1.25; letter-spacing: -0.015em;
@@ -295,4 +287,5 @@ a { color: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; transition-delay: 0ms !important; }
+  .loading__mark::before { left: 0; width: 100%; opacity: 0.5; animation: none !important; }
 }

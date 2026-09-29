@@ -84,17 +84,8 @@ function showResults() {
   hero.classList.add('has-results');
   dataPromise.then((data) => {
     const s = data.stats.all;
-    for (const [key, to] of [['crz', s.crz_median_pct], ['control', s.non_crz_median_pct]]) {
-      const el = document.querySelector(`[data-key-value="${key}"]`);
-      if (reduceMotion) { el.textContent = fmtSigned(to) + '%'; continue; }
-      const t0 = performance.now();
-      const step = (now) => {
-        const p = easeOutCubic(clamp01((now - t0) / 1100));
-        el.textContent = fmtSigned(to * p) + '%';
-        if (p < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    }
+    document.querySelector('[data-key-value="crz"]').textContent = fmtSigned(s.crz_median_pct) + '%';
+    document.querySelector('[data-key-value="control"]').textContent = fmtSigned(s.non_crz_median_pct) + '%';
   });
 }
 // Never hold the results back for long, whatever the map is doing.
